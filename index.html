@@ -8,13 +8,88 @@
     <title>API</title>
 </head>
 <body style="padding: 5% 20%;">
+    <style>
+    </style>
     <div class="col">
         <h1>Upload Movie</h1>
         <form action="/upload" method="post" enctype="multipart/form-data">
-            <label class="form-label" for="customFile">Select Movie</label>
-            <input type="file" class="form-control" name="file"/>
-            <br>
-            <button class="btn btn-outline-dark" type="submit"> Submit</button>
+              <div class="form-group row">
+                <label for="title" class="col-4 col-form-label">Movie Title:</label> 
+                <div class="col-8">
+                  <input id="title" name="title" placeholder="Movie Title" type="text" required="required" class="form-control">
+                </div>
+              </div>
+              <br>
+              <div class="form-group row">
+                <label for="producer" class="col-4 col-form-label">Producer:</label> 
+                <div class="col-8">
+                  <input id="producer" name="producer" placeholder="Movie Producer" type="text" class="form-control" required="required">
+                </div>
+              </div>
+              <br>
+              <div class="form-group row">
+                <label for="director" class="col-4 col-form-label">Director:</label> 
+                <div class="col-8">
+                  <input id="director" name="director" placeholder="Movie Director" type="text" class="form-control" required="required">
+                </div>
+              </div>
+              <br>
+              <div class="form-group row">
+                <label for="actor" class="col-4 col-form-label">Actor:</label> 
+                <div class="col-8">
+                  <input id="actor" name="actor" placeholder="Actors Name" type="text" class="form-control" required="required">
+                </div>
+              </div>
+              <br>
+              <div class="form-group row">
+                <label for="story" class="col-4 col-form-label">Story:</label> 
+                <div class="col-8">
+                  <textarea id="story" name="story" cols="40" rows="4" class="form-control" required="required"></textarea>
+                </div>
+              </div>
+              <br>
+              <div class="form-group row">
+                <label for="language" class="col-4 col-form-label">Language:</label> 
+                <div class="col-8">
+                  <input id="language" name="language" placeholder="Language" type="text" class="form-control" required="required">
+                </div>
+              </div>
+              <br>
+              <div class="form-group row">
+                <label class="col-4 col-form-label" for="category">Category:</label> 
+                <div class="col-8">
+                  <select id="category" name="category" class="custom-select" required="required">
+                    <option value="action">Action</option>
+                    <option value="drama">Drama</option>
+                    <option value="comedy">Comedy</option>
+                    <option value="romance">Romance</option>
+                    <option value="horror">Horror</option>
+                  </select>
+                </div>
+              </div>
+              <br>
+              <div class="form-group row">
+                <label for="client" class="col-4 col-form-label">Client:</label> 
+                <div class="col-8">
+                  <input id="client" name="client" placeholder="Client Name" type="text" class="form-control" required="required">
+                </div>
+              </div>
+              <br>
+              <div class="form-group row">
+                <label for="cost" class="col-4 col-form-label">Cost:</label> 
+                <div class="col-8">
+                  <input id="cost" name="cost" placeholder="Cost" type="text" class="form-control" required="required">
+                </div>
+              </div>
+              <br>
+              <div class="form-group row"></div>
+                <label class="form-label" for="customFile">Select Movie:</label>
+                <div class="col-8"></div>
+                    <input type="file" class="form-control" name="file" id="file"/>
+                </div>
+            </div>
+                <br>
+                <button class="btn btn-outline-dark" type="submit"> Submit</button>
         </form>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
