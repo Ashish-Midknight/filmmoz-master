@@ -24,11 +24,11 @@ connection.connect(function(err) {
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    if (file.mimetype == 'video/mp4' || 'video/mov' || 'video/wvm' || 'video/flv' || 'video/avi' || 'video/mkv' || 'video/webm' || 'video/x-matroska') {
+    if (file.fieldname == 'vid') {
       cb(null, __dirname + "/uploads/movies");
     }
     
-    else if (file.mimetype == 'image/jpg' || 'image/jpeg' || 'image/png' || 'image/gif' || 'image/psd') {
+    else if (file.fieldname == 'img') {
       cb(null, __dirname + "/uploads/thumbnails");
     }
     else{
@@ -36,8 +36,7 @@ const storage = multer.diskStorage({
     }
   },
   filename : (req, file, cb) => {
-    console.log(file.mimetype);
-
+    console.log(file);
     cb(null, file.originalname);
   }
 });
