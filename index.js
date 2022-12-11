@@ -9,9 +9,8 @@ var connection = mysql.createConnection({
     host:"localhost",
     user:"root",
     password:"",
-    database : ""
-})
-  
+    database : "filmmoz"
+}) 
 connection.connect(function(err) {
   if(err){
     console.log("Error in the connection")
@@ -19,33 +18,34 @@ connection.connect(function(err) {
   }
   else{
     console.log(`Database Connected`)
-    connection.query(`SHOW DATABASES`, 
-    function (err, result) {
-      if(err)
-        console.log(`Error executing the query - ${err}`)
-      else
-        console.log("Result: ",result) 
-    })
   }
 })
 
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, __dirname + "/uploads");
+    if (file.mimetype == 'video/mp4' || 'video/mov' || 'video/wvm' || 'video/flv' || 'video/avi' || 'video/mkv' || 'video/webm' || 'video/x-matroska') {
+      cb(null, __dirname + "/uploads/movies");
+    }
+    
+    else if (file.mimetype == 'image/jpg' || 'image/jpeg' || 'image/png' || 'image/gif' || 'image/psd') {
+      cb(null, __dirname + "/uploads/thumbnails");
+    }
+    else{
+      cb(null, __dirname + "/uploads");
+    }
   },
   filename : (req, file, cb) => {
-    console.log(file);
+    console.log(file.mimetype);
+
     cb(null, file.originalname);
   }
 });
 const upload = multer({ storage: storage });
+const uploadData = upload.fields([{name:'vid', maxCount:1}, {name:'img', maxCount:1}]);
 
-app.get('/', (req, res) => {
-  res.sendFile(__dirname + "/index.html");
-});
 
-app.post('/upload', upload.single('file'), (req, res,) => {
-    const date = new Date();
+app.post('/upload', uploadData , (req, res,) => {
     var title = req.body.title;
     var producer = req.body.producer;
     var director = req.body.director;
@@ -55,9 +55,10 @@ app.post('/upload', upload.single('file'), (req, res,) => {
     var category = req.body.category;
     var client = req.body.client;
     var cost = req.body.cost;
-    var video = "http://192.168.1.4/uploads/" + req.file.filename;
-    var sql = "INSERT INTO movies(title,director_name,producer_name,actor_name,client_name,story,language,file_name,category,cost,date) VALUES ('title','director','producer','actor','client','story','language','video','category','cost','date')";
-    con.query(sql, function (err, result) {
+    var video = "localhost:3000/uploads/" + req.files['vid'][0].filename;
+    var img = "localhost:3000/uploads/" + req.files['img'][0].filename;
+    var sql = `INSERT INTO movies(title,director_name,producer_name,actor_name,client_name,story,language,file_name,category,cost,thumb_filr_name) VALUES (?,?,?,?,?,?,?,?,?,?,?);`;
+    connection.query(sql, [title,director,producer,actor,client,story,language,video,category,cost,img] ,(err, result) => {
       if (err) throw err;
       console.log("1 record inserted");
     });
@@ -65,6 +66,9 @@ app.post('/upload', upload.single('file'), (req, res,) => {
 });
 
 
-app.listen(3000, '192.168.1.6' ,  () => {
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + "/index.html");
+});
+app.listen(3000 ,  () => {
   console.log(`listening on port 3000`)
 });
