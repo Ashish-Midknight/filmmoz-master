@@ -1,7 +1,5 @@
 const express = require('express');
 const multer = require('multer');
-var fs = require('fs');
-var progress = require('progress-stream');
 var mysql = require('mysql');
 const bodyParser = require('body-parser');
 
@@ -66,17 +64,6 @@ app.post('/upload', uploadData , (req, res,) => {
     var size = req.files['vid'][0].size;
     console.log(size);
 
-    var p = progress();
-    var upload = multer().single('vid');
-    req.pipe(p);
-    p.headers = req.headers;
-    p.on('progress', function(progress) {
-      console.log(Math.round(progress.percentage)+'%');
-    });
-    upload(p, res, function(progress) {
-      console.log(Math.round(progress.percentage)+'%');
-    });
-
 
     var sql = `INSERT INTO movies(title,director_name,producer_name,actor_name,client_name,story,language,file_name,category,cost,thumb_filr_name) VALUES (?,?,?,?,?,?,?,?,?,?,?);`;
     connection.query(sql, [title,director,producer,actor,client,story,language,video,category,cost,img] ,(err, result) => {
@@ -86,6 +73,12 @@ app.post('/upload', uploadData , (req, res,) => {
 
     res.send('<h1>Uploaded</h1>');
 });
+
+
+
+app.get('/upload', (req,res) => {
+  res.render('upload');
+})
 
 
 //-----------------View Section-----------------//
@@ -105,7 +98,7 @@ app.get('/view', (req, res) => {
 
 //--------------------------home route-----------------------//
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + "/index.html");
+  res.render("index");
 });
 app.listen(3000 , '192.168.1.12',  () => {
   console.log(`listening on port 3000`)
