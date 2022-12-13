@@ -1,10 +1,17 @@
 const express = require('express');
 const multer = require('multer');
 var fs = require('fs');
-const bodyParser = require('body-parser');
+var progress = require('progress-stream');
 var mysql = require('mysql');
+const bodyParser = require('body-parser');
+
+
 const app = express();
 
+app.set('view engine', 'ejs');
+app.use(express.static('public'));
+app.use(bodyParser.urlencoded({extended:true}));
+//--------------------SQL Connection-------------------//
 var connection = mysql.createConnection({
     host:"localhost",
     user:"root",
@@ -13,23 +20,23 @@ var connection = mysql.createConnection({
 }) 
 connection.connect(function(err) {
   if(err){
-    console.log("Error in the connection")
-    console.log(err)
+    console.log("Error in the connection");
+    console.log(err);
   }
   else{
-    console.log(`Database Connected`)
+    console.log(`Database Connected`);
   }
 })
 
-
+//----------------------Multer---------------------//
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     if (file.fieldname == 'vid') {
-      cb(null, __dirname + "/uploads/movies");
+      cb(null, __dirname + "/public/uploads/movies");
     }
     
     else if (file.fieldname == 'img') {
-      cb(null, __dirname + "/uploads/thumbnails");
+      cb(null, __dirname + "/public/uploads/thumbnails");
     }
     else{
       cb(null, __dirname + "/uploads");
@@ -43,7 +50,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 const uploadData = upload.fields([{name:'vid', maxCount:1}, {name:'img', maxCount:1}]);
 
-
+//------------------Upload Section-------------------//
 app.post('/upload', uploadData , (req, res,) => {
     var title = req.body.title;
     var producer = req.body.producer;
@@ -54,20 +61,52 @@ app.post('/upload', uploadData , (req, res,) => {
     var category = req.body.category;
     var client = req.body.client;
     var cost = req.body.cost;
-    var video = "localhost:3000/uploads/" + req.files['vid'][0].filename;
-    var img = "localhost:3000/uploads/" + req.files['img'][0].filename;
+    var video = "localhost:3000/uploads/movies/" + req.files['vid'][0].filename;
+    var img = "localhost:3000/uploads/thumbnails/" + req.files['img'][0].filename;
+    var size = req.files['vid'][0].size;
+    console.log(size);
+
+    var p = progress();
+    var upload = multer().single('vid');
+    req.pipe(p);
+    p.headers = req.headers;
+    p.on('progress', function(progress) {
+      console.log(Math.round(progress.percentage)+'%');
+    });
+    upload(p, res, function(progress) {
+      console.log(Math.round(progress.percentage)+'%');
+    });
+
+
     var sql = `INSERT INTO movies(title,director_name,producer_name,actor_name,client_name,story,language,file_name,category,cost,thumb_filr_name) VALUES (?,?,?,?,?,?,?,?,?,?,?);`;
     connection.query(sql, [title,director,producer,actor,client,story,language,video,category,cost,img] ,(err, result) => {
       if (err) throw err;
       console.log("1 record inserted");
     });
-    res.send("<h1>Uploaded</h1>")
+
+    res.send('<h1>Uploaded</h1>');
 });
 
 
+//-----------------View Section-----------------//
+let view = 0;
+var numrow = 0;
+app.get('/view', (req, res) => {
+  var sql = `SELECT * FROM movies`;
+  var count = `SELECT COUNT(*) FROM movies`;
+  connection.query(count, (err, row) => {
+    numrow = row[0]['COUNT(*)']; 
+  });
+  connection.query(sql, (err, rows) => {
+    res.render("view", {rows: rows,view: view, numrow: numrow}); 
+  });
+
+});
+
+//--------------------------home route-----------------------//
 app.get('/', (req, res) => {
   res.sendFile(__dirname + "/index.html");
 });
-app.listen(3000 ,  () => {
+app.listen(3000 , '192.168.1.12',  () => {
   console.log(`listening on port 3000`)
 });
