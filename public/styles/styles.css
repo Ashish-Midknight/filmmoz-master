@@ -1,7 +1,4 @@
-.container{
-padding-top: 5vh;
+.section{
+    padding: 15vh 30vh;
 }
-.card-text{
-    padding: 2px;
-    margin: 0;
-}
+

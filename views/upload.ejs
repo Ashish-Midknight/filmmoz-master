@@ -1,61 +1,53 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
-    <title>Upload</title>
-</head>
-<body style="padding: 3% 20%;">
+<%- include("partials/header"); -%>
+<section class="container-fluid">
     <div class="col">
         <h3>Upload Movie</h3>
         <form action="/upload" method="post" enctype="multipart/form-data">
               <div class="form-group row">
-                <label for="title" class="col-4 col-form-label">Movie Title:</label> 
-                <div class="col-8">
+                <label for="title" class="col-3 col-form-label">Movie Title:</label> 
+                <div class="col-9">
                   <input id="title" name="title" placeholder="Movie Title" type="text" required="required" class="form-control">
                 </div>
               </div>
               <br>
               <div class="form-group row">
-                <label for="producer" class="col-4 col-form-label">Producer:</label> 
-                <div class="col-8">
+                <label for="producer" class="col-3 col-form-label">Producer:</label> 
+                <div class="col-9">
                   <input id="producer" name="producer" placeholder="Movie Producer" type="text" class="form-control" required="required">
                 </div>
               </div>
               <br>
               <div class="form-group row">
-                <label for="director" class="col-4 col-form-label">Director:</label> 
-                <div class="col-8">
+                <label for="director" class="col-3 col-form-label">Director:</label> 
+                <div class="col-9">
                   <input id="director" name="director" placeholder="Movie Director" type="text" class="form-control" required="required">
                 </div>
               </div>
               <br>
               <div class="form-group row">
-                <label for="actor" class="col-4 col-form-label">Actor:</label> 
-                <div class="col-8">
+                <label for="actor" class="col-3 col-form-label">Actor:</label> 
+                <div class="col-9">
                   <input id="actor" name="actor" placeholder="Actors Name" type="text" class="form-control" required="required">
                 </div>
               </div>
               <br>
               <div class="form-group row">
-                <label for="story" class="col-4 col-form-label">Story:</label> 
-                <div class="col-8">
+                <label for="story" class="col-3 col-form-label">Story:</label> 
+                <div class="col-9">
                   <textarea id="story" name="story" cols="40" rows="4" class="form-control" required="required"></textarea>
                 </div>
               </div>
               <br>
               <div class="form-group row">
-                <label for="language" class="col-4 col-form-label">Language:</label> 
-                <div class="col-8">
+                <label for="language" class="col-3 col-form-label">Language:</label> 
+                <div class="col-9">
                   <input id="language" name="language" placeholder="Language" type="text" class="form-control" required="required">
                 </div>
               </div>
               <br>
               <div class="form-group row">
-                <label class="col-4 col-form-label" for="category">Category:</label> 
-                <div class="col-8">
+                <label class="col-3 col-form-label" for="category">Category:</label> 
+                <div class="col-9">
                   <select id="category" name="category" class="custom-select" required="required">
                     <option value="action">Action</option>
                     <option value="drama">Drama</option>
@@ -67,29 +59,29 @@
               </div>
               <br>
               <div class="form-group row">
-                <label for="client" class="col-4 col-form-label">Client:</label> 
-                <div class="col-8">
+                <label for="client" class="col-3 col-form-label">Client:</label> 
+                <div class="col-9">
                   <input id="client" name="client" placeholder="Client Name" type="text" class="form-control" required="required">
                 </div>
               </div>
               <br>
               <div class="form-group row">
-                <label for="cost" class="col-4 col-form-label">Cost:</label> 
-                <div class="col-8">
+                <label for="cost" class="col-3 col-form-label">Cost:</label> 
+                <div class="col-9">
                   <input id="cost" name="cost" placeholder="Cost" type="text" class="form-control" required="required">
                 </div>
               </div>
               <br>
               <div class="form-group row">
-                <label class="col-4 col-form-label" for="file">Select Movie:</label>
-                <div class="col-8">
+                <label class="col-3 col-form-label" for="file">Select Movie:</label>
+                <div class="col-9">
                     <input type="file" class="form-control" name="vid" id="vid" required="true"/>
                 </div>
               </div>
               <br>
               <div class="form-group row">
-                <label class="col-4 col-form-label" for="img">Select Thumbnail:</label>
-                <div class="col-8">
+                <label class="col-3 col-form-label" for="img">Select Thumbnail:</label>
+                <div class="col-9">
                     <input type="file" class="form-control" name="img" id="img" required="true"/>
                 </div>
               </div>
@@ -119,6 +111,5 @@
         <br>
 
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+  </section>
+  <%- include("partials/footer"); -%>

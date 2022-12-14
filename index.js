@@ -3,7 +3,6 @@ const multer = require('multer');
 var mysql = require('mysql');
 const bodyParser = require('body-parser');
 
-
 const app = express();
 
 app.set('view engine', 'ejs');
@@ -49,6 +48,11 @@ const upload = multer({ storage: storage });
 const uploadData = upload.fields([{name:'vid', maxCount:1}, {name:'img', maxCount:1}]);
 
 //------------------Upload Section-------------------//
+app.get('/upload', (req,res) => {
+  res.render('upload');
+})
+
+
 app.post('/upload', uploadData , (req, res,) => {
     var title = req.body.title;
     var producer = req.body.producer;
@@ -71,14 +75,10 @@ app.post('/upload', uploadData , (req, res,) => {
       console.log("1 record inserted");
     });
 
-    res.send('<h1>Uploaded</h1>');
+    res.send('<div><h1>Uploaded</h1> <a href="/">Dashboard</a> </div>');
 });
 
 
-
-app.get('/upload', (req,res) => {
-  res.render('upload');
-})
 
 
 //-----------------View Section-----------------//
