@@ -1,4 +1,25 @@
-.section{
-    padding: 15vh 30vh;
+body{
+    padding: 10vh 30vh;
 }
 
+.edit{
+    transition: all 0.3s;
+    cursor: pointer;
+}
+.edit:hover{
+    transform: scale(1.5);
+}
+.info{
+    transition: all 0.3s;
+    cursor: pointer;
+}
+.info:hover{
+    transform: scale(1.5);
+}
+.delete{
+    transition: all 0.3s;
+    cursor: pointer;
+}
+.delete:hover{
+    transform: scale(1.5);
+}

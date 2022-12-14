@@ -1,14 +1,14 @@
 <%- include("partials/header"); -%>
-<section class="scrollable">
+<section>
     <% for( let i = 0; i < rows.length; i++ ) { %>
         <div class="card mb-3 text-bg-warning">
             <div class="row g-0">
-              <div class="col-md-4 d-flex justify-content-center">
+              <div class="col-md-4 d-flex justify-content-center align-items-center">
                 <% var srow = rows[i].thumb_filr_name;  %>
                 <% srow = srow.slice(34);  %>  
-                <img src="uploads/thumbnails/<%= srow %>" alt="<%= srow %> " style="height:20vh">
+                <img src="uploads/thumbnails/<%= srow %>" alt="<%= srow %> " style="height: 10vw">
               </div>
-              <div class="col-md-8">
+              <div class="col-md-7">
                 <div class="card-body">
                     
                   <h5 class="card-title"><%= rows[i].title %></h5>
@@ -25,8 +25,19 @@
                   <p class="card-text"><small class="text-muted">Uploaded on:</small></p>
                 </div>
               </div>
+              <div class="col-1 d-flex justify-content-center h-300 flex-wrap bd-highlight m-auto mb-3">
+                <%- include("partials/editmodal.ejs"); -%>
+                <%- include("partials/viewmodal.ejs"); -%>
+                <%- include("partials/deletemodal.ejs"); -%>
+              </div>
             </div>
           </div>         
         <% } %>
+
+
+        
+        
+        
+
 </section>
 <%- include("partials/footer"); -%>
