@@ -1,5 +1,5 @@
 body{
-    padding: 10vh 30vh;
+    padding: 7% 10%;
 }
 
 .edit{
@@ -7,19 +7,19 @@ body{
     cursor: pointer;
 }
 .edit:hover{
-    transform: scale(1.5);
+    transform: scale(1.2);
 }
 .info{
     transition: all 0.3s;
     cursor: pointer;
 }
 .info:hover{
-    transform: scale(1.5);
+    transform: scale(1.2);
 }
 .delete{
     transition: all 0.3s;
     cursor: pointer;
 }
 .delete:hover{
-    transform: scale(1.5);
+    transform: scale(1.2);
 }

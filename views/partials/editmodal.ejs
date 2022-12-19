@@ -1,23 +1,107 @@
 <!-- Button trigger modal -->
-<button type="button" class="btn btn-warning edit px-3" data-bs-toggle="modal" data-bs-target="#exampleModaledit">
-    <i class="bi bi-pen-fill" style="font-size: large;"></i>
+  <button type="submit" class="btn btn-light edit px-4" data-bs-toggle="modal" data-bs-target="#exampleModaledit<%= [i] %> ">
+  <i class="bi bi-pen-fill" style="font-size: large;"></i>
   </button>
 
   <!-- Modal -->
-  <div class="modal fade" id="exampleModaledit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <form action="/edit" method="post">
+  <div class="modal fade" id="exampleModaledit<%= [i] %>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-fullscreen">
-      <div class="modal-content">
+      <div class="modal-content p-5">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+        <br>
         <div class="modal-body">
-          ABC
+          <input type="text" name="file" value="<%= rows[i].file_name %>" hidden>
+
+            <div class="row">
+              <div class="col-6">
+                
+                <div class="form-group row">
+                  <label class="col-3 col-form-label" for="text">Title :</label> 
+                  <div class="col-9">
+                    <input id="title" name="title" type="text" class="form-control" value="<%= rows[i].title %>">
+                  </div>
+                </div>
+                <br>
+                <div class="form-group row">
+                  <label for="director" class="col-3 col-form-label">Director :</label> 
+                  <div class="col-9">
+                    <input id="director" name="director" type="text" class="form-control" value="<%= rows[i].director_name %>">
+                  </div>
+                </div>
+                <br>
+                <div class="form-group row">
+                  <label for="producer" class="col-3 col-form-label">Producer :</label> 
+                  <div class="col-9">
+                    <input id="producer" name="producer" type="text" class="form-control" value="<%= rows[i].producer_name %>">
+                  </div>
+                </div>
+                <br>
+                <div class="form-group row">
+                  <label for="actor" class="col-3 col-form-label">Actor :</label> 
+                  <div class="col-9">
+                    <input id="actor" name="actor" type="text" class="form-control" value="<%= rows[i].actor_name %>">
+                  </div>
+                </div>
+                <br>
+                <div class="form-group row">
+                  <label for="client" class="col-3 col-form-label">Client  :</label> 
+                  <div class="col-9">
+                    <input id="client" name="client" type="text" class="form-control" value="<%= rows[i].client_name %>">
+                  </div>
+                </div>
+
+              </div>
+              <div class="col-6">
+
+                <div class="form-group row">
+                  <label for="story" class="col-3 col-form-label">Story :</label> 
+                  <div class="col-9">
+                    <textarea id="story" name="story" cols="40" rows="5" class="form-control"><%= rows[i].story %></textarea>
+                  </div>
+                </div>
+                <br>
+                <div class="form-group row">
+                  <label for="language" class="col-3 col-form-label">Language :</label> 
+                  <div class="col-9">
+                    <input id="language" name="language" type="text" class="form-control" value="<%= rows[i].language %>">
+                  </div>
+                </div>
+                <br>
+                <div class="form-group row">
+                  <label for="category" class="col-3 col-form-label">Category</label> 
+                  <div class="col-9">
+                    <select id="category" name="category" class="custom-select">
+                      <option value="action" selected><%= rows[i].category %></option>
+                      <option value="action">Action</option>
+                    <option value="drama">Drama</option>
+                    <option value="comedy">Comedy</option>
+                    <option value="romance">Romance</option>
+                    <option value="horror">Horror</option>
+                    </select>
+                  </div>
+                </div>
+                <br>
+                <div class="form-group row">
+                  <label for="cost" class="col-3 col-form-label">Cost :</label> 
+                  <div class="col-9">
+                    <input id="cost" name="cost" type="number" class="form-control" value="<%= rows[i].cost %>">
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
+          <button name="submit" type="submit" class="btn btn-primary">Save changes</button>
         </div>
       </div>
     </div>
   </div>
+</form>

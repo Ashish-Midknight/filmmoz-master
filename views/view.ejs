@@ -1,7 +1,23 @@
 <%- include("partials/header"); -%>
+<body>
+  <nav class="navbar navbar-expand navbar-dark bg-dark fixed-top ps-5 pe-2">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/">Filmmoz</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse d-flex justify-content-end" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item" >
+            <a class="nav-link active" href="/upload"> <button class="btn btn-primary">Upload new</button> </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 <section>
     <% for( let i = 0; i < rows.length; i++ ) { %>
-        <div class="card mb-3 text-bg-warning">
+        <div class="card border-dark mb-3">
             <div class="row g-0">
               <div class="col-md-4 d-flex justify-content-center align-items-center">
                 <% var srow = rows[i].thumb_filr_name;  %>
@@ -26,9 +42,9 @@
                 </div>
               </div>
               <div class="col-1 d-flex justify-content-center h-300 flex-wrap bd-highlight m-auto mb-3">
-                <%- include("partials/editmodal.ejs"); -%>
+                <%- include("partials/editmodal.ejs", {i:i, rows:rows}); -%>
                 <%- include("partials/viewmodal.ejs"); -%>
-                <%- include("partials/deletemodal.ejs"); -%>
+                <%- include("partials/deletemodal.ejs",  {i:i, rows:rows}); -%>
               </div>
             </div>
           </div>         
