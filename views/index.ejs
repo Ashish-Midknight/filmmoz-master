@@ -25,12 +25,14 @@
         <th scope="col"></th>
       </tr>
     </thead>
+    
     <tbody>
+      <% for( let i = 0; i < rows.length; i++ ) { %>
       <tr>
-        <th scope="row">1</th>
-        <td>Full name</td>
-        <td>3 month</td>
-        <td>15 days</td>
+        <th scope="row"><%= rows[i].user_id %> </th>
+        <td><%= rows[i].name %></td>
+        <td><%= rows[i].subscription_pack %></td>
+        <td><%= rows[i].sub_end_date.toString().slice(4,15) %></td>
         <td><div class="dropdown">
             <button class="btn btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-list"></i>
@@ -42,5 +44,6 @@
             </ul>
           </div></td>
       </tr>
+      <% } %> 
   </table>
 <%- include("partials/footer"); -%>

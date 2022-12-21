@@ -22,7 +22,6 @@ var connection = mysql.createConnection({
 connection.connect(function(err) {
   if(err){
     console.log("Error in the connection");
-    console.log(err);
   }
   else{
     console.log(`Database Connected`);
@@ -49,7 +48,7 @@ const storage = multer.diskStorage({
     }
   },
   filename : (req, file, cb) => {
-    console.log(file);
+    console.log(file.originalname);
     cb(null, file.originalname);
   }
 });
@@ -72,17 +71,16 @@ app.post('/upload', uploadData , (req, res,) => {
     var actor = req.body.actor;
     var story = req.body.story;
     var language = req.body.language;
-    var category = req.body.category;
+    var category = [req.body.category];
     category = category.join();
     var client = req.body.client;
-    var cost = req.body.cost;
     var video = "localhost:3000/uploads/movies/" + req.files['vid'][0].filename;
     var img = "localhost:3000/uploads/thumbnails/" + req.files['img'][0].filename;
     var trailer = "localhost:3000/uploads/trailer/" + req.files['trailer'][0].filename;
 
 
-    var sql = `INSERT INTO movies(title,director_name,producer_name,actor_name,client_name,story,language,file_name,category,cost,thumb_filr_name,trailer) VALUES (?,?,?,?,?,?,?,?,?,?,?,?);`;
-    connection.query(sql, [title,director,producer,actor,client,story,language,video,category,cost,img,trailer] ,(err, result) => {
+    var sql = `INSERT INTO movies(title,director_name,producer_name,actor_name,client_name,story,language,file_name,category,thumb_file_name,trailer) VALUES (?,?,?,?,?,?,?,?,?,?,?);`;
+    connection.query(sql, [title,director,producer,actor,client,story,language,video,category,img,trailer] ,(err, result) => {
       if (err) throw err;
       console.log("1 record inserted");
     });
@@ -121,10 +119,9 @@ app.post('/edit', (req,res) => {
   var language = req.body.language;
   var category = req.body.category;
   var client = req.body.client;
-  var cost = req.body.cost;
   var file = req.body.file;
 
-  var sql = `UPDATE movies SET title='${title}', director_name='${director}', producer_name='${producer}', actor_name='${actor}',client_name='${client}', story='${story}', language='${language}', category='${category}', cost='${cost}' WHERE file_name='${file}';`;
+  var sql = `UPDATE movies SET title='${title}', director_name='${director}', producer_name='${producer}', actor_name='${actor}',client_name='${client}', story='${story}', language='${language}', category='${category}' WHERE file_name='${file}';`;
   connection.query(sql, (err) => {
     console.log(title + " : updated");
   });
@@ -143,15 +140,12 @@ app.post("/delete", (req,res) => {
   console.log(img);
   fs.unlink("public/" + file, function (err) {
     if (err) {res.redirect('view'); console.log(err);};
-    console.log('File deleted!');
   });
   fs.unlink("public/" + img, function (err) {
     if (err) {res.redirect('view'); console.log(err);};
-    console.log('File deleted!');
   });
   fs.unlink("public/" + trailer, function (err) {
     if (err) {res.redirect('view'); console.log(err);};
-    console.log('File deleted!');
   });
 
   connection.query(sql, (err) =>{
@@ -163,10 +157,20 @@ app.post("/delete", (req,res) => {
 
 
 
-//--------------------------home route-----------------------//
+//--------------------------Dashboard-----------------------//
 app.get('/', (req, res) => {
-  res.render("index");
+  var userCount = undefined;
+  var sql = `SELECT * FROM user`;
+  var count = `SELECT COUNT(*) FROM user`;
+  connection.query(count, (err, row) => {
+    userCount = row[0]['COUNT(*)']; 
+  });
+  connection.query(sql, (err, rows) => {
+    res.render("index", {userCount: userCount, rows:rows}); 
+  });
 });
+
+
 app.listen(3000 , '192.168.1.4',  () => {
   console.log(`listening on port 3000`);
 });

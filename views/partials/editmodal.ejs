@@ -67,30 +67,77 @@
                 <div class="form-group row">
                   <label for="language" class="col-3 col-form-label">Language :</label> 
                   <div class="col-9">
-                    <input id="language" name="language" type="text" class="form-control" value="<%= rows[i].language %>">
+                    <select class="form-select" aria-label="Default select example" required="true" name="language">
+                      <option value="<%= rows[i].language %>"><%= rows[i].language %></option>
+                      <option value="Hindi">Hindi</option>
+                      <option value="Marathi">Marathi</option>
+                      <option value="English">English</option>
+                    </select>
                   </div>
                 </div>
                 <br>
                 <div class="form-group row">
                   <label for="category" class="col-3 col-form-label">Category</label> 
                   <div class="col-9">
-                    <select id="category" name="category" class="custom-select">
-                      <option value="action" selected><%= rows[i].category %></option>
-                      <option value="action">Action</option>
-                    <option value="drama">Drama</option>
-                    <option value="comedy">Comedy</option>
-                    <option value="romance">Romance</option>
-                    <option value="horror">Horror</option>
-                    </select>
+                    <% var category = rows[i].category %> 
+                    <% category = category.split(',') %>
+                    <% for (let j = 0; j < category.length; j++) { %>
+                        <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" name="category" value="Action" id="action" 
+                        <% if (category[j] == 'Action') { %>
+                        checked>
+                        <% } else { %>
+                          >
+                          <% } %> 
+                        <label class="form-check-label" for="action">Action</label>
+                      </div>                      
+                      
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="checkbox" name="category" value="Drama" id="drama"
+                          <% if (category[j] == 'Drama') { %>
+                            checked>
+                            <% } else { %>
+                          >
+                          <% } %> 
+                          <label class="form-check-label" for="drama">Drama</label>
+                        </div>
+                       
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="checkbox" name="category" value="Comedy" id="comedy" 
+                          <% if (category[j] == 'Comedy') { %>
+                          checked>
+                          <% } else { %>
+                            >
+                            <% } %>
+                          <label class="form-check-label" for="comedy">Comedy</label>
+                        </div>
+                  
+                    
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="checkbox" name="category" value="Horror" id="horror"
+                      <% if ( category[j] == 'Horror') { %>
+                        checked>
+                        <% } else { %>
+                          >
+                          <% } %>
+                      <label class="form-check-label" for="horror">Horror</label>
+                    </div>
+
+                    
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="checkbox" name="category" value="Adventure" id="adventure"
+                      <% if ( category[j] == 'Adventure') { %>
+                        checked>
+                        <% } else { %> 
+                          >
+                          <% } %> 
+                      <label class="form-check-label" for="adventure">Adventure</label>
+                    </div>
+                    <% } %>
+
                   </div>
                 </div>
                 <br>
-                <div class="form-group row">
-                  <label for="cost" class="col-3 col-form-label">Cost :</label> 
-                  <div class="col-9">
-                    <input id="cost" name="cost" type="number" class="form-control" value="<%= rows[i].cost %>">
-                  </div>
-                </div>
 
               </div>
             </div>

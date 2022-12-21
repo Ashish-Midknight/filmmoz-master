@@ -7,7 +7,7 @@
   <form action="/delete" method="post">
     <% var file = rows[i].file_name.slice(15) %>
     <input type="text" name="file" value="<%= file %>" hidden>
-    <% var img = rows[i].thumb_filr_name.slice(15) %> 
+    <% var img = rows[i].thumb_file_name.slice(15) %> 
     <input type="text" name="img" value="<%= img %>" hidden>
     <% var trailer = rows[i].trailer.slice(15) %> 
     <input type="text" name="trailer" value="<%= trailer %>" hidden>

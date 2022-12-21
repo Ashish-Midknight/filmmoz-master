@@ -20,7 +20,7 @@
         <div class="card border-dark mb-3">
             <div class="row g-0">
               <div class="col-md-4 d-flex justify-content-center align-items-center">
-                <% var srow = rows[i].thumb_filr_name;  %>
+                <% var srow = rows[i].thumb_file_name;  %>
                 <% srow = srow.slice(34);  %>  
                 <img src="uploads/thumbnails/<%= srow %>" alt="<%= srow %> " style="height: 10vw">
               </div>
@@ -31,14 +31,13 @@
                   <div class="row">
                     <div class="col">
                         <p class="card-text">category : <%= rows[i].category %></p>
-                        <p class="card-text">cost : <%= rows[i].cost %></p>
+                        <p class="card-text">client name : <%= rows[i].client_name %> </p>
                     </div>
                     <div class="col">
-                        <p class="card-text">client name : <%= rows[i].client_name %> </p>
                         <p class="card-text">view count : <%= view %> </p>
                     </div>
                   </div>
-                  <p class="card-text"><small class="text-muted">Uploaded on:</small></p>
+                  <p class="card-text"><small class="text-muted">Uploaded on: <%= rows[i].date %> </small></p>
                 </div>
               </div>
               <div class="col-1 d-flex justify-content-center h-300 flex-wrap bd-highlight m-auto mb-3">
