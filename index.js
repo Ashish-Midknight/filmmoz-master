@@ -135,23 +135,22 @@ app.post("/delete", (req,res) => {
   var file = req.body.file;
   var img = req.body.img;
   var trailer = req.body.trailer;
+  console.log(trailer);
   var sql = `DELETE FROM movies WHERE file_name="localhost:3000/${file}"`;
-  console.log(file);
-  console.log(img);
   fs.unlink("public/" + file, function (err) {
-    if (err) {res.redirect('view'); console.log(err);};
+    if (err) {res.redirect('view');};
   });
   fs.unlink("public/" + img, function (err) {
-    if (err) {res.redirect('view'); console.log(err);};
+    if (err) {res.redirect('view');};
   });
   fs.unlink("public/" + trailer, function (err) {
-    if (err) {res.redirect('view'); console.log(err);};
+    if (err) {res.redirect('view');};
   });
 
   connection.query(sql, (err) =>{
     console.log("Entry deleted");
   }) 
-  res.redirect("view");
+  res.redirect("/view");
 })
 
 
@@ -169,6 +168,48 @@ app.get('/', (req, res) => {
     res.render("index", {userCount: userCount, rows:rows}); 
   });
 });
+
+//-------------------------Block User------------------------//
+app.post('/blockUser', (req, res) => {
+  var id = req.body.user;
+  var status = req.body.status;
+  if (status == 1) {
+    var sql = `UPDATE user SET block_status= 0 WHERE user_id = ${id}`
+  } else {
+    var sql = `UPDATE user SET block_status= 1 WHERE user_id = ${id}`
+  }
+  connection.query(sql, (err) => {
+    if(err){console.log(err)};
+  })
+  res.redirect('/')
+})
+
+//-------------------------Delete User------------------------//
+app.post('/deleteUser', (req, res) => {
+  var id = req.body.user;
+    var sql = `DELETE FROM user WHERE user_id = ${id}`
+  connection.query(sql, (err) => {
+    if(err){console.log(err)};
+  })
+  res.redirect('/')
+})
+app.post('/blockUser', (req, res) => {
+  var id = req.body.user;
+  var status = req.body.status;
+  if (status == 1) {
+    var sql = `UPDATE user SET block_status= 0 WHERE user_id = ${id}`
+  } else {
+    var sql = `UPDATE user SET block_status= 1 WHERE user_id = ${id}`
+  }
+  connection.query(sql, (err) => {
+    if(err){console.log(err)};
+  })
+  res.redirect('/')
+})
+app.post('/notify', (req,res) => {
+  console.log("notification");
+})
+
 
 
 app.listen(3000 , '192.168.1.4',  () => {

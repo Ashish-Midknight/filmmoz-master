@@ -13,6 +13,14 @@
   <div class="load" style="position: fixed; visibility: hidden;">
     <img src="assets/loading.gif" alt="">
   </div>
+  <script>
+    document.onreadystatechange = function() {
+      if (document.readyState == "loading") {
+        document.querySelector(".load").style.visibility = "visible";
+      }
+    };
+
+  </script>
 <section>
     <div class="col">
       <div class="row">
@@ -128,11 +136,7 @@
         </form>
         <br>
 
-        <script>
-          document.getElementById('#upload-form').onsubmit = function(){
-            setTimeout((document.querySelector('img').css(" visibility", "visible")), 100);
-          };
-        </script>
+        
     </div>
   </section>
   <%- include("partials/footer"); -%>

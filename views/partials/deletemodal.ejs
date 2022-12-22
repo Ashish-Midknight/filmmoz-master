@@ -1,31 +1,37 @@
 <!-- Button trigger modal -->
-<button type="button" class="btn btn-warning delete btn-light px-4" data-bs-toggle="modal" data-bs-target="#exampleModaldelete">
+<button type="submit" class="btn btn-warning delete btn-light px-4" data-bs-toggle="modal" data-bs-target="#exampleModaldelete<%= [i] %>">
     <i class="bi bi-trash-fill" style="font-size: larger;"></i>
   </button>
 
   <!-- Modal -->
   <form action="/delete" method="post">
-    <% var file = rows[i].file_name.slice(15) %>
-    <input type="text" name="file" value="<%= file %>" hidden>
-    <% var img = rows[i].thumb_file_name.slice(15) %> 
-    <input type="text" name="img" value="<%= img %>" hidden>
-    <% var trailer = rows[i].trailer.slice(15) %> 
-    <input type="text" name="trailer" value="<%= trailer %>" hidden>
-  <div class="modal fade" id="exampleModaldelete" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          Delete This Movie?
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary">Delete</button>
+    <div class="modal fade" id="exampleModaldelete<%= [i] %>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Delete movie?</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+
+              <div class="row">
+                <div class="col-6">
+                  <div class="form-group row">
+                    <div class="col-9">
+                      Delete <%= rows[i].title %> ?
+                      <input type="text" name="file" value="<%= rows[i].file_name.slice(15) %>" hidden>
+                      <input type="text" name="img" value="<%= rows[i].thumb_file_name.slice(15) %>" hidden>
+                      <input type="text" name="trailer" value="<%= rows[i].trailer.slice(15) %>" hidden>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button name="submit" type="submit" class="btn btn-primary">Delete</button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</form>
+  </form>
