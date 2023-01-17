@@ -1,18 +1,44 @@
  <!-- Button trigger modal -->
- <button type="button" class="btn btn-light info px-4" data-bs-toggle="modal" data-bs-target="#exampleModalview">
+ <button type="button" class="btn btn-light info px-4" data-bs-toggle="modal" data-bs-target="#exampleModalview<%= [i] %> ">
     <i class="bi bi-info-square-fill" style="font-size: large;"></i>
   </button>
 
   <!-- Modal -->
-  <div class="modal fade" id="exampleModalview" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal fade" id="exampleModalview<%= [i] %>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-fullscreen">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Details</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          DEF
+          <div class="row p-5">
+            <h5> <%= rows[i].title %></h5> <br> <br><br>
+            <div class="col">
+              <p>Movie id : <%= rows[i].movie_id %></p>
+              <hr>
+              <p>Producer : <%= rows[i].producer_name %></p>
+              <hr>
+              <p>Director : <%= rows[i].director_name %></p>
+              <hr>
+              <p>Actors : <%= rows[i].actor_name %></p>
+              <hr>
+              <p>Client : <%= rows[i].client_name %></p>
+
+            </div>
+            <div class="col">
+              <p>Story : <%= rows[i].story %></p>
+              <hr>
+              <p>Language : <%= rows[i].language %></p>
+              <hr>
+              <p>Category : <%= rows[i].category %></p>
+              <hr>
+              <p>Total Views : <%= rows[i].view_count %></p>
+              <hr>
+              <p>Upload Date : <%= rows[i].upload_time %></p>
+              
+            </div>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

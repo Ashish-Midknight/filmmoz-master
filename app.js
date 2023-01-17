@@ -3,13 +3,13 @@ const multer = require('multer');
 var mysql = require('mysql');
 var fs = require('fs');
 const bodyParser = require('body-parser');
-
 const app = express();
 
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended:true}));
-
+const progressUpdate = new console.Console(fs.createWriteStream('public/assets/progress.txt'));
+var loginFlag = 0;
 
 
 //--------------------SQL Connection-------------------//
@@ -48,7 +48,6 @@ const storage = multer.diskStorage({
     }
   },
   filename : (req, file, cb) => {
-    console.log(file.originalname);
     cb(null, file.originalname);
   }
 });
@@ -57,14 +56,34 @@ const uploadData = upload.fields([{name:'vid', maxCount:1}, {name:'img', maxCoun
 
 
 
-
 //------------------Upload Section-------------------//
-app.get('/upload', (req,res) => {
-  res.render('upload');
+
+app.get('/upload', (req, res) => {
+  if (loginFlag == 0) {
+    res.redirect("/")
+  } else {
+    res.render('upload');
+  }
+  
 })
 
+function progress(req, res, next) {
+  let progress = 0;
+  var percentage = 0;
+  const file_size = req.headers["content-length"];
+  req.on("data", (chunk) => {
+      progress += chunk.length;
+      percentage = (progress / file_size) * 100;
+      percentage = Math.floor(percentage);
+      console.log(percentage);
+  });
+   next(); 
+}
 
-app.post('/upload', uploadData , (req, res,) => {
+
+app.post('/upload', progress, uploadData , (req, res,) => {
+
+  
     var title = req.body.title;
     var producer = req.body.producer;
     var director = req.body.director;
@@ -78,13 +97,10 @@ app.post('/upload', uploadData , (req, res,) => {
     var img = "localhost:3000/uploads/thumbnails/" + req.files['img'][0].filename;
     var trailer = "localhost:3000/uploads/trailer/" + req.files['trailer'][0].filename;
 
-
     var sql = `INSERT INTO movies(title,director_name,producer_name,actor_name,client_name,story,language,file_name,category,thumb_file_name,trailer) VALUES (?,?,?,?,?,?,?,?,?,?,?);`;
-    connection.query(sql, [title,director,producer,actor,client,story,language,video,category,img,trailer] ,(err, result) => {
+    connection.query(sql, [title,director,producer,actor,client,story,language,video,category,img,trailer] ,(err) => {
       if (err) throw err;
-      console.log("1 record inserted");
     });
-
     res.redirect('view');
 });
 
@@ -95,15 +111,19 @@ app.post('/upload', uploadData , (req, res,) => {
 let view = 0;
 var numrow = 0;
 app.get('/view', (req, res) => {
-  var sql = `SELECT * FROM movies`;
-  var count = `SELECT COUNT(*) FROM movies`;
-  connection.query(count, (err, row) => {
+  if (loginFlag == 0) {
+    res.redirect("/")
+  } else {
+    var sql = `SELECT * FROM movies`;
+    var count = `SELECT COUNT(*) FROM movies`;
+    connection.query(count, (err, row) => {
     numrow = row[0]['COUNT(*)']; 
   });
   connection.query(sql, (err, rows) => {
     res.render("view", {rows: rows,view: view, numrow: numrow}); 
   });
-
+  }
+  
 });
 
 
@@ -123,7 +143,6 @@ app.post('/edit', (req,res) => {
 
   var sql = `UPDATE movies SET title='${title}', director_name='${director}', producer_name='${producer}', actor_name='${actor}',client_name='${client}', story='${story}', language='${language}', category='${category}' WHERE file_name='${file}';`;
   connection.query(sql, (err) => {
-    console.log(title + " : updated");
   });
   res.redirect('/view');
 })
@@ -155,19 +174,52 @@ app.post("/delete", (req,res) => {
 
 
 
-
-//--------------------------Dashboard-----------------------//
-app.get('/', (req, res) => {
-  var userCount = undefined;
-  var sql = `SELECT * FROM user`;
-  var count = `SELECT COUNT(*) FROM user`;
-  connection.query(count, (err, row) => {
-    userCount = row[0]['COUNT(*)']; 
-  });
-  connection.query(sql, (err, rows) => {
-    res.render("index", {userCount: userCount, rows:rows}); 
-  });
+//--------------------------Login-----------------------//
+app.get("/", (req,res) => {
+  if (loginFlag == 0) {
+    res.render("index");
+  } else {
+    var userCount = undefined;
+        var sql = `SELECT * FROM user`;
+        var count = `SELECT COUNT(*) FROM user`;
+        connection.query(count, (err, row) => {
+          userCount = row['COUNT(*)']; 
+        });
+        connection.query(sql, (err, rows) => {
+          res.render("dashboard", {userCount: userCount, rows:rows}); 
+        });
+  }
 });
+
+
+app.get("/logout", (req, res) => {
+  loginFlag = 0;
+  res.redirect("/");
+})
+
+app.post("/login", (req, res) => {
+  var id = req.body.loginid;
+  var pass = req.body.password;
+  var sql = `SELECT * FROM admin`;
+  connection.query(sql, (err, dbop) => {
+    var dbid = dbop[0].userid;
+    var dbpass = dbop[0].password;
+    if (id == dbid) {
+      if (pass == dbpass) {
+        loginFlag = 1;
+        res.redirect("/");
+      } else {
+        res.send("err pass");
+      }
+      
+    } else {
+      res.send("err id");
+    }
+  });
+  
+})
+
+
 
 //-------------------------Block User------------------------//
 app.post('/blockUser', (req, res) => {
@@ -207,11 +259,17 @@ app.post('/blockUser', (req, res) => {
   res.redirect('/')
 })
 app.post('/notify', (req,res) => {
-  console.log("notification");
+  var message = req.body.message;
+  var id = req.body.user;
+  var sql = `UPDATE user SET notification = "${messsage}" WHERE user_id = ${id}`
+  connection.query(sql, (err) => {
+    if(err){console.log(err)};
+  })
+  res.redirect('/');
 })
 
 
 
-app.listen(3000 , '192.168.1.4',  () => {
+app.listen(3000 , '192.168.1.6',  () => {
   console.log(`listening on port 3000`);
 });

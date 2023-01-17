@@ -80,11 +80,27 @@
                   <label for="category" class="col-3 col-form-label">Category</label> 
                   <div class="col-9">
                     <% var category = rows[i].category %> 
+                    
                     <% category = category.split(',') %>
+
+                    <% console.log(category) %> 
+                    <% var arr = [0, 0, 0, 0, 0] %> 
                     <% for (let j = 0; j < category.length; j++) { %>
+                    <%  if (category[j] == 'Action' ) { %>
+                    <% arr[0] = 1 }%> 
+                    <%  if (category[j] == 'Drama' ) { %>
+                    <% arr[1] = 1 }%>  
+                    <%  if (category[j] == 'Comedy' ) { %>
+                    <% arr[2] = 1 }%> 
+                    <%  if (category[j] == 'Horror' ) { %>
+                    <% arr[3] = 1 }%>  
+                    <%  if (category[j] == 'Adventure' ) { %>
+                    <% arr[4] = 1 }%> 
+                    <% } %>
+
                         <div class="form-check form-check-inline">
                         <input class="form-check-input" type="checkbox" name="category" value="Action" id="action" 
-                        <% if (category[j] == 'Action') { %>
+                        <% if (arr[0] == 1) { %>
                         checked>
                         <% } else { %>
                           >
@@ -94,7 +110,7 @@
                       
                         <div class="form-check form-check-inline">
                           <input class="form-check-input" type="checkbox" name="category" value="Drama" id="drama"
-                          <% if (category[j] == 'Drama') { %>
+                          <% if (arr[1] == 1) { %>
                             checked>
                             <% } else { %>
                           >
@@ -104,7 +120,7 @@
                        
                         <div class="form-check form-check-inline">
                           <input class="form-check-input" type="checkbox" name="category" value="Comedy" id="comedy" 
-                          <% if (category[j] == 'Comedy') { %>
+                          <% if (arr[2] == 1) { %>
                           checked>
                           <% } else { %>
                             >
@@ -115,7 +131,7 @@
                     
                     <div class="form-check form-check-inline">
                       <input class="form-check-input" type="checkbox" name="category" value="Horror" id="horror"
-                      <% if ( category[j] == 'Horror') { %>
+                      <% if (arr[3] == 1) { %>
                         checked>
                         <% } else { %>
                           >
@@ -126,14 +142,13 @@
                     
                     <div class="form-check form-check-inline">
                       <input class="form-check-input" type="checkbox" name="category" value="Adventure" id="adventure"
-                      <% if ( category[j] == 'Adventure') { %>
+                      <% if (arr[4] == 1) { %>
                         checked>
                         <% } else { %> 
                           >
                           <% } %> 
                       <label class="form-check-label" for="adventure">Adventure</label>
                     </div>
-                    <% } %>
 
                   </div>
                 </div>

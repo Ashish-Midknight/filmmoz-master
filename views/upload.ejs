@@ -10,17 +10,6 @@
   <title>Upload</title>
 </head>
 <body style="padding: 2% 10%;">
-  <div class="load" style="position: fixed; visibility: hidden;">
-    <img src="assets/loading.gif" alt="">
-  </div>
-  <script>
-    document.onreadystatechange = function() {
-      if (document.readyState == "loading") {
-        document.querySelector(".load").style.visibility = "visible";
-      }
-    };
-
-  </script>
 <section>
     <div class="col">
       <div class="row">
@@ -135,8 +124,9 @@
                 </div>
         </form>
         <br>
-
-        
+        <div class="progress">
+          <div class="progress-bar" id="bar" role="progressbar" aria-label="Example with label" style="width: 2%" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
     </div>
   </section>
   <%- include("partials/footer"); -%>

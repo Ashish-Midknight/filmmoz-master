@@ -17,14 +17,14 @@
   </nav>
 <section>
     <% for( let i = 0; i < rows.length; i++ ) { %>
-        <div class="card border-dark mb-3">
+        <div class="card border-dark mb-3" style="border-radius: 0 0.375rem 0.375rem 0;">
             <div class="row g-0">
-              <div class="col-md-4 d-flex justify-content-center align-items-center">
+              <div class="col-md-2 d-flex justify-content-center align-items-center">
                 <% var srow = rows[i].thumb_file_name;  %>
                 <% srow = srow.slice(34);  %>  
-                <img src="uploads/thumbnails/<%= srow %>" alt="<%= srow %> " style="height: 10vw">
+                <img src="uploads/thumbnails/<%= srow %>" alt="<%= srow %> " style="height: 10vw; object-fit: cover; overflow: hidden; border: 5px solid #fff;">
               </div>
-              <div class="col-md-7">
+              <div class="col-md-9">
                 <div class="card-body">
                     
                   <h5 class="card-title"><%= rows[i].title %></h5>
@@ -42,7 +42,7 @@
               </div>
               <div class="col-1 d-flex justify-content-center h-300 flex-wrap bd-highlight m-auto mb-3">
                 <%- include("partials/editmodal.ejs", {i:i, rows:rows}); -%>
-                <%- include("partials/viewmodal.ejs"); -%>
+                <%- include("partials/viewmodal.ejs", {i:i, rows:rows}); -%>
                 <%- include("partials/deletemodal.ejs",  {i:i, rows:rows}); -%>
               </div>
             </div>
