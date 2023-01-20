@@ -1,15 +1,19 @@
+require ('dotenv').config ();
 const express = require('express');
 const multer = require('multer');
 var mysql = require('mysql');
 var fs = require('fs');
 const bodyParser = require('body-parser');
 const app = express();
+var md5 = require('md5');
+var session = require('express-session');
 
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended:true}));
 const progressUpdate = new console.Console(fs.createWriteStream('public/assets/progress.txt'));
-var loginFlag = 0;
+app.set('trust proxy', 1);
+app.use(session({secret: process.env.SECRET, resave: false,saveUninitialized: true}));
 
 
 //--------------------SQL Connection-------------------//
@@ -58,15 +62,6 @@ const uploadData = upload.fields([{name:'vid', maxCount:1}, {name:'img', maxCoun
 
 //------------------Upload Section-------------------//
 
-app.get('/upload', (req, res) => {
-  if (loginFlag == 0) {
-    res.redirect("/")
-  } else {
-    res.render('upload');
-  }
-  
-})
-
 function progress(req, res, next) {
   let progress = 0;
   var percentage = 0;
@@ -81,51 +76,82 @@ function progress(req, res, next) {
 }
 
 
+app.get('/upload', (req, res) => {
+  if (!req.session.user) {
+    res.redirect("/");
+  } else {
+    res.render('upload', {trigger:0});
+  }
+  
+})
+
 app.post('/upload', progress, uploadData , (req, res,) => {
 
   
-    var title = req.body.title;
-    var producer = req.body.producer;
-    var director = req.body.director;
-    var actor = req.body.actor;
-    var story = req.body.story;
-    var language = req.body.language;
-    var category = [req.body.category];
-    category = category.join();
-    var client = req.body.client;
-    var video = "localhost:3000/uploads/movies/" + req.files['vid'][0].filename;
-    var img = "localhost:3000/uploads/thumbnails/" + req.files['img'][0].filename;
-    var trailer = "localhost:3000/uploads/trailer/" + req.files['trailer'][0].filename;
+  var title = req.body.title;
+  var producer = req.body.producer;
+  var director = req.body.director;
+  var actor = req.body.actor;
+  var story = req.body.story;
+  var language = req.body.language;
+  var category = [req.body.category];
+  category = category.join();
+  var client = req.body.client;
+  var video = "localhost:3000/uploads/movies/" + req.files['vid'][0].filename;
+  var img = "localhost:3000/uploads/thumbnails/" + req.files['img'][0].filename;
+  var trailer = "localhost:3000/uploads/trailer/" + req.files['trailer'][0].filename;
 
-    var sql = `INSERT INTO movies(title,director_name,producer_name,actor_name,client_name,story,language,file_name,category,thumb_file_name,trailer) VALUES (?,?,?,?,?,?,?,?,?,?,?);`;
-    connection.query(sql, [title,director,producer,actor,client,story,language,video,category,img,trailer] ,(err) => {
-      if (err) throw err;
-    });
-    res.redirect('view');
+  connection.query(`SELECT * FROM movies WHERE file_name = '${video}'`, (err,result) => {
+    if(err) {res.redirect("/");}
+    var len = result.length;
+    if (len > 0) {
+      var trigger = 1;
+      res.render('upload', {trigger:1});
+    } else {
+      var sql = `INSERT INTO movies(title,director_name,producer_name,actor_name,client_name,story,language,file_name,category,thumb_file_name,trailer) VALUES (?,?,?,?,?,?,?,?,?,?,?);`;
+  connection.query(sql, [title,director,producer,actor,client,story,language,video,category,img,trailer] ,(err) => {
+    if (err) throw err;
+  });
+  res.redirect('view');
+    }
+  });
 });
 
 
 
 
 //-----------------View Section-----------------//
-let view = 0;
-var numrow = 0;
 app.get('/view', (req, res) => {
-  if (loginFlag == 0) {
+  if (!req.session.user) {
     res.redirect("/")
   } else {
-    var sql = `SELECT * FROM movies`;
-    var count = `SELECT COUNT(*) FROM movies`;
-    connection.query(count, (err, row) => {
-    numrow = row[0]['COUNT(*)']; 
-  });
-  connection.query(sql, (err, rows) => {
-    res.render("view", {rows: rows,view: view, numrow: numrow}); 
-  });
+    var numrows = 0;
+    connection.query(`SELECT COUNT(*) FROM movies;`, (err, result) => {
+      if (err) throw err;
+      numrows = result[0]["COUNT(*)"];
+    })
+    var page = req.query.page ? Number(req.query.page) : 1;
+    var start = (20 * (page - 1));
+    var end = 5;
+    var sql = `SELECT * FROM movies LIMIT ${start}, ${end}`;
+    connection.query(sql, (err, rows) => {
+      if (err) throw err;
+      res.render("view", {rows: rows, page: page, start: start, end: end, numrows:numrows}); 
+    });
   }
   
 });
 
+
+app.post("/search", (req, res) => {
+  var name = req.body.search;
+  var sql = `SELECT * FROM movies WHERE title LIKE '%${name}%' `;
+  connection.query(sql, (err, rows) => {
+    if (err) throw err;
+    res.render("view", {rows:rows, page: 1, start: 1, end: 2, numrows:1});
+  })
+  
+})
 
 
 //--------------------------edit section------------------------//
@@ -151,11 +177,11 @@ app.post('/edit', (req,res) => {
 
 //--------------------------Delete Section---------------------//
 app.post("/delete", (req,res) => {
+  var id = req.body.id;
   var file = req.body.file;
   var img = req.body.img;
   var trailer = req.body.trailer;
-  console.log(trailer);
-  var sql = `DELETE FROM movies WHERE file_name="localhost:3000/${file}"`;
+  var sql = `DELETE FROM movies WHERE movie_id="${id}"`;
   fs.unlink("public/" + file, function (err) {
     if (err) {res.redirect('view');};
   });
@@ -176,7 +202,7 @@ app.post("/delete", (req,res) => {
 
 //--------------------------Login-----------------------//
 app.get("/", (req,res) => {
-  if (loginFlag == 0) {
+  if (!req.session.user) {
     res.render("index");
   } else {
     var userCount = undefined;
@@ -193,27 +219,28 @@ app.get("/", (req,res) => {
 
 
 app.get("/logout", (req, res) => {
-  loginFlag = 0;
+  req.session.destroy();
   res.redirect("/");
 })
 
 app.post("/login", (req, res) => {
   var id = req.body.loginid;
-  var pass = req.body.password;
+  var pass = md5(req.body.password);
   var sql = `SELECT * FROM admin`;
   connection.query(sql, (err, dbop) => {
+    if (err) {res.redirect("/");}
     var dbid = dbop[0].userid;
     var dbpass = dbop[0].password;
     if (id == dbid) {
       if (pass == dbpass) {
-        loginFlag = 1;
+        req.session.user = id;
         res.redirect("/");
       } else {
-        res.send("err pass");
+        res.redirect("/");
       }
       
     } else {
-      res.send("err id");
+      res.redirect("/");
     }
   });
   
@@ -243,8 +270,10 @@ app.post('/deleteUser', (req, res) => {
   connection.query(sql, (err) => {
     if(err){console.log(err)};
   })
-  res.redirect('/')
+  res.redirect('/');
 })
+
+
 app.post('/blockUser', (req, res) => {
   var id = req.body.user;
   var status = req.body.status;
@@ -270,6 +299,6 @@ app.post('/notify', (req,res) => {
 
 
 
-app.listen(3000 , '192.168.1.6',  () => {
+app.listen(3000 , '192.168.1.5',  () => {
   console.log(`listening on port 3000`);
 });

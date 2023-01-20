@@ -6,6 +6,14 @@
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
+
+      <div class="collapse navbar-collapse d-flex justify-content-end" id="navbarNav">
+        <form action="/search" method="post" class="d-flex" role="search">
+          <input class="form-control me-2" type="search" name="search" placeholder="Search" aria-label="Search">
+          <button class="btn btn-success" type="submit">Search</button>
+        </form>
+      </div>
+      
       <div class="collapse navbar-collapse d-flex justify-content-end" id="navbarNav">
         <ul class="navbar-nav">
           <li class="nav-item" >
@@ -34,7 +42,7 @@
                         <p class="card-text">client name : <%= rows[i].client_name %> </p>
                     </div>
                     <div class="col">
-                        <p class="card-text">view count : <%= view %> </p>
+                        <p class="card-text">view count : <%= rows[i].view_count %> </p>
                     </div>
                   </div>
                   <p class="card-text"><small class="text-muted">Uploaded on: <%= rows[i].upload_time %> </small></p>
@@ -49,9 +57,46 @@
           </div>         
         <% } %>
 
-
-        
-        
+        <div class="d-flex justify-content-center m-auto">
+        <nav aria-label="Page navigation example m-auto">
+          <ul class="pagination">
+            <li class="page-item">
+              <% if(page > 1) { %> 
+              <a class="page-link" href="/view?page=<%= page-1 %> " aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+              <% } %> 
+            </li>
+            
+            <% var lastElements = numrows % 20 %> 
+            <% if(lastElements > 0) { %> 
+            <% var totalPages = Math.floor(numrows / 20) +1%>
+            <% } else { %>
+            <% var totalPages = Math.floor(numrows / 20)  %>
+            <% } %>
+            <% for (let i = 1; i <= totalPages; i++) { %> 
+              
+              <li class="page-item"><a class="page-link" href="/view?page=<%= i %> ">
+                
+              <% if(page == i) {%> 
+                <strong><%= i %></strong>
+              <% } else {%> 
+              <%= i %> 
+              <% } %>
+              </a></li>
+              
+                       
+            <% } %> 
+            <li class="page-item">
+              <% if(page < totalPages) { %> 
+              <a class="page-link" href="/view?page=<%= page+1 %>" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+              <% } %>
+            </li> 
+          </ul>
+        </nav>
+      </div>
         
 
 </section>
