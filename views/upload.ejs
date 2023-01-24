@@ -104,22 +104,8 @@
               <div class="form-group row">
                 <label class="col-3 col-form-label" for="file">Select Movie:</label>
                 <div class="col-9">
-                    <input type="file" class="form-control" name="vid" id="vid"  onchange="upload(this.files)" required="true" accept="video/*, .mkv"/>
+                    <input type="file" class="form-control" name="vid" id="vid" required="true" accept="video/*, .mkv"/>
                 </div>
-
-
-                <script src="/socket.io/socket.io.js"></script>
-                <script>
-                  const socket = io("localhost:3000");
-
-                  function upload(files) {
-                    socket.emit("upload", files[0], (status) => {
-                      console.log(status);
-                    });
-                  }
-                </script>
-
-
               </div>
               <br>
               <div class="form-group row">

@@ -11,7 +11,6 @@ var session = require('express-session');
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended:true}));
-const progressUpdate = new console.Console(fs.createWriteStream('public/assets/progress.txt'));
 app.set('trust proxy', 1);
 app.use(session({secret: process.env.SECRET, resave: false,saveUninitialized: true}));
 
