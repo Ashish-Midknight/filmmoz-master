@@ -118,12 +118,19 @@ app.post('/upload', uploadData , (req, res,) => {
   var video = "localhost:3000/uploads/movies/" + movieName;
   var img = "localhost:3000/uploads/thumbnails/" + req.files['img'][0].filename;
   var trailer = "localhost:3000/uploads/trailer/" + req.files['trailer'][0].filename;
-
-  var sql = `INSERT INTO movies(title,director_name,producer_name,actor_name,client_name,story,language,file_name,category,thumb_file_name,trailer) VALUES (?,?,?,?,?,?,?,?,?,?,?);`;
-  connection.query(sql, [title,director,producer,actor,client,story,language,video,category,img,trailer] ,(err) => {
-    if (err) throw err;
-  });
-  res.redirect('view');
+  var sql = `SELECT * FROM movies WHERE trailer = "${trailer}"`;
+  connection.query(sql , (err, result) => {
+    if (result.length > 0) {
+      res.render("/upload", {trigger:1})
+    } else {
+      var sql = `INSERT INTO movies(title,director_name,producer_name,actor_name,client_name,story,language,file_name,category,thumb_file_name,trailer) VALUES (?,?,?,?,?,?,?,?,?,?,?);`;
+      connection.query(sql, [title,director,producer,actor,client,story,language,video,category,img,trailer] ,(err) => {
+        if (err) throw err;
+      });
+      res.redirect('view');
+    }
+  })
+  
   });
 
 
