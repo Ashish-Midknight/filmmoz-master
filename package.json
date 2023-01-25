@@ -20,6 +20,7 @@
     "mysql": "^2.18.1",
     "nodemon": "^2.0.20",
     "progress-stream": "^2.0.0",
-    "socket.io": "^4.5.4"
+    "socket.io": "^4.5.4",
+    "socketio-file-upload": "^0.7.3"
   }
 }

@@ -1,19 +1,25 @@
 require ('dotenv').config ();
 const express = require('express');
+const app = express();
+const SocketServer = require('ws').Server;
+const http = require('http').createServer(app);
+var SocketIOFileUpload = require('socketio-file-upload');
+const io = require('socket.io')(http);
 const multer = require('multer');
 var mysql = require('mysql');
 var fs = require('fs');
 const bodyParser = require('body-parser');
-const app = express();
 var md5 = require('md5');
 var session = require('express-session');
 
 app.set('view engine', 'ejs');
+app.use(SocketIOFileUpload.router).listen(80);
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended:true}));
 app.set('trust proxy', 1);
 app.use(session({secret: process.env.SECRET, resave: false,saveUninitialized: true}));
-
+const server = app.listen(8000, () => console.log(`Listening on 8000`));
+const wss = new SocketServer({ server });
 
 //--------------------SQL Connection-------------------//
 var connection = mysql.createConnection({
@@ -36,11 +42,7 @@ connection.connect(function(err) {
 //----------------------Multer---------------------//
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    if (file.fieldname == 'vid') {
-      cb(null, __dirname + "/public/uploads/movies");
-    }
-    
-    else if (file.fieldname == 'img') {
+    if (file.fieldname == 'img') {
       cb(null, __dirname + "/public/uploads/thumbnails");
     }
     else if (file.fieldname == 'trailer') {
@@ -55,24 +57,11 @@ const storage = multer.diskStorage({
   }
 });
 const upload = multer({ storage: storage });
-const uploadData = upload.fields([{name:'vid', maxCount:1}, {name:'img', maxCount:1}, {name:'trailer', maxCount:1}]);
+const uploadData = upload.fields([{name:'img', maxCount:1}, {name:'trailer', maxCount:1}]);
 
 
 
 //------------------Upload Section-------------------//
-
-function progress(req, res, next) {
-  let progress = 0;
-  var percentage = 0;
-  const file_size = req.headers["content-length"];
-  req.on("data", (chunk) => {
-      progress += chunk.length;
-      percentage = (progress / file_size) * 100;
-      percentage = Math.floor(percentage);
-      console.log(percentage);
-  });
-   next(); 
-}
 
 
 app.get('/upload', (req, res) => {
@@ -84,8 +73,38 @@ app.get('/upload', (req, res) => {
   
 })
 
-app.post('/upload', progress, uploadData , (req, res,) => {
 
+var movieName = "";
+io.sockets.on("connection", function(socket, err){
+    
+      var uploader = new SocketIOFileUpload();
+      uploader.dir = __dirname + "/public/uploads/movies";
+      uploader.listen(socket);
+      uploader.on("start", function(event){
+          if (fs.existsSync(__dirname + "/public/uploads/movies/" + event.file.name)) {
+            fs.unlink(__dirname + "/public/uploads/movies/" + event.file.name, function(err){
+              if (err) {
+                console.log(err);
+              }
+            });
+        };
+      });
+
+      uploader.on("saved", function(event){
+        console.log(event.file.name);
+        movieName = event.file.name;
+      });
+
+      uploader.on("error", function(event){
+        fs.unlink(__dirname + "/public/uploads/movies/" + event.file.name, function(err){
+          if (err) {console.log(err);}
+        });
+        console.log("Error from uploader", event);
+      });
+    });
+
+
+app.post('/upload', uploadData , (req, res,) => {
   
   var title = req.body.title;
   var producer = req.body.producer;
@@ -96,25 +115,17 @@ app.post('/upload', progress, uploadData , (req, res,) => {
   var category = [req.body.category];
   category = category.join();
   var client = req.body.client;
-  var video = "localhost:3000/uploads/movies/" + req.files['vid'][0].filename;
+  var video = "localhost:3000/uploads/movies/" + movieName;
   var img = "localhost:3000/uploads/thumbnails/" + req.files['img'][0].filename;
   var trailer = "localhost:3000/uploads/trailer/" + req.files['trailer'][0].filename;
 
-  connection.query(`SELECT * FROM movies WHERE file_name = '${video}'`, (err,result) => {
-    if(err) {res.redirect("/");}
-    var len = result.length;
-    if (len > 0) {
-      var trigger = 1;
-      res.render('upload', {trigger:1});
-    } else {
-      var sql = `INSERT INTO movies(title,director_name,producer_name,actor_name,client_name,story,language,file_name,category,thumb_file_name,trailer) VALUES (?,?,?,?,?,?,?,?,?,?,?);`;
+  var sql = `INSERT INTO movies(title,director_name,producer_name,actor_name,client_name,story,language,file_name,category,thumb_file_name,trailer) VALUES (?,?,?,?,?,?,?,?,?,?,?);`;
   connection.query(sql, [title,director,producer,actor,client,story,language,video,category,img,trailer] ,(err) => {
     if (err) throw err;
   });
   res.redirect('view');
-    }
   });
-});
+
 
 
 
@@ -181,14 +192,21 @@ app.post("/delete", (req,res) => {
   var img = req.body.img;
   var trailer = req.body.trailer;
   var sql = `DELETE FROM movies WHERE movie_id="${id}"`;
-  fs.unlink("public/" + file, function (err) {
-    if (err) {res.redirect('view');};
+
+  fs.unlink(__dirname + "/public/" + file, function(err){
+    fs.unlink("public/" + file, function (err) {
+      if (err) {res.redirect('view');};
+    });
   });
-  fs.unlink("public/" + img, function (err) {
-    if (err) {res.redirect('view');};
+  fs.unlink(__dirname + "/public/" + img, function(err){
+    fs.unlink("public/" + file, function (err) {
+      if (err) {res.redirect('view');};
+    });
   });
-  fs.unlink("public/" + trailer, function (err) {
-    if (err) {res.redirect('view');};
+  fs.unlink(__dirname + "/public/" + trailer, function(err){
+    fs.unlink("public/" + file, function (err) {
+      if (err) {res.redirect('view');};
+    });
   });
 
   connection.query(sql, (err) =>{
@@ -298,6 +316,6 @@ app.post('/notify', (req,res) => {
 
 
 
-app.listen(3000 , '192.168.1.5',  () => {
+http.listen(3000 , '192.168.1.9',  () => {
   console.log(`listening on port 3000`);
 });
