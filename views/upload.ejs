@@ -10,7 +10,7 @@
         <% if(trigger == 1) { %> 
           <p style="color: red;">Already Exist!</p>
         <% } %> 
-        <form id="upload-form" action="/upload" method="post" enctype="multipart/form-data">
+        <form id="upload-form" action="/upload" method="post" enctype='application/x-www-form-urlencoded'>
               <div class="form-group row">
                 <label for="title" class="col-3 col-form-label">Movie Title:</label> 
                 <div class="col-9">
@@ -96,50 +96,24 @@
 
               <div class="form-group row">
                 <label class="col-3 col-form-label" for="file">Select Movie:</label>
-                <div class="col-7">
+                <div class="col-9">
                     <input type="file" class="form-control" name="movie" id="upload_movie" required="true" accept="video/*, .mkv" />
                     <br>
                     <div class="progress">
-                      <div class="progress-bar" style="width: 0;" id="bar" role="progressbar" aria-label="Example with label" aria-valuemin="0" aria-valuemax="100"></div>
+                      <div class="progress-bar" style="width: 0;" id="bar0" role="progressbar" aria-label="Example with label" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
                 </div>
-                <div class="col-2"><button class="btn btn-success" id="upload" type="button"> Upload </button></div>
               </div>
-              
-              <script type="text/javascript">
-                document.addEventListener("DOMContentLoaded", function(){
-                
-                    // Initialize instances:
-                    var socket = io("192.168.1.9:3000");
-                    var siofu = new SocketIOFileUpload(socket);
-                
-                    // Configure the three ways that SocketIOFileUpload can read files:
-                    siofu.listenOnSubmit(document.getElementById("upload"), document.getElementById("upload_movie"));
-                
-                
-                    // Do something on upload progress:
-                    siofu.addEventListener("progress", function(event){
-                      document.getElementById("upload_movie").setAttribute("disabled", "disabled")
-                      var percent = event.bytesLoaded / event.file.size * 100;
-                      document.getElementById("bar").style["width"] = percent + "%";
-                    });
-                
-                    // Do something when a file is uploaded:
-                    siofu.addEventListener("complete", function(event){
-                      document.getElementById("submit").disabled = false;
-                      document.getElementById("bar").style["background-color"] = "green";
-                    });
-                
-                }, false);
-                </script>
-                
-
 
               <br>
               <div class="form-group row">
                 <label class="col-3 col-form-label" for="img">Select Thumbnail:</label>
                 <div class="col-9">
                     <input type="file" class="form-control" name="img" id="img" required="true" accept="image/*"/>
+                    <br>
+                    <div class="progress">
+                      <div class="progress-bar" style="width: 0;" id="bar1" role="progressbar" aria-label="Example with label" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
                 </div>
               </div>
               <br>
@@ -147,14 +121,20 @@
                 <label class="col-3 col-form-label" for="img">Select Trailer:</label>
                 <div class="col-9">
                     <input type="file" class="form-control" name="trailer" id="trailer" required="true" accept="video/*, .mkv"/>
+                    <br>
+                    <div class="progress">
+                      <div class="progress-bar" style="width: 0;" id="bar2" role="progressbar" aria-label="Example with label" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
                 </div>
               </div>
                 <br>
-                <button id="submit" class="btn btn-outline-dark col-1" type="submit" disabled> Submit</button>
+                <button id="submit" class="btn btn-outline-dark col-1" type="button"> Submit</button>
                 <button class="btn btn-danger col-1 mx-5"><a class="text-light" style="text-decoration: none;" href="/view"> Cancel</a></button>
-                </div>
+                <button id="form-submit" class="btn btn-outline-dark col-1" type="submit" style="visibility: hidden;"> Submit</button>
+              </div>
         </form>
         <br>
     </div>
   </section>
+  <script src="/scripts/script.js"></script>
   <%- include("partials/footer"); -%>
