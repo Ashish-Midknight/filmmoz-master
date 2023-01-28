@@ -23,3 +23,11 @@ body{
 .delete:hover{
     transform: scale(1.2);
 }
+.disabler{
+    position: fixed;
+    height: 100vh;
+    width: 100%;
+    background-color: #ffffff;
+    opacity: 0.3;
+    visibility: hidden;
+}

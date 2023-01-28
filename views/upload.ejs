@@ -1,6 +1,7 @@
 <%- include("partials/header"); -%>
 <body style="padding: 2% 10%;">
 <section>
+  <div class="disabler"></div>
     <div class="col">
       <div class="row">
         <h3 class="col-4 text-danger"><strong>Upload Movie</strong></h3>
@@ -49,7 +50,7 @@
               <div class="form-group row">
                 <label for="language" class="col-3 col-form-label">Language:</label> 
                 <div class="col-9">
-                  <select class="form-select" aria-label="Default select example" required="true" name="language">
+                  <select id="language" class="form-select" aria-label="Default select example" required="true" name="language">
                     <option selected>Open this select menu</option>
                     <option value="Hindi">Hindi</option>
                     <option value="Marathi">Marathi</option>
@@ -128,7 +129,7 @@
                 </div>
               </div>
                 <br>
-                <button id="submit" class="btn btn-outline-dark col-1" type="button"> Submit</button>
+                <button id="submit" class="btn btn-outline-dark col-1" type="button" disabled> Submit</button>
                 <button class="btn btn-danger col-1 mx-5"><a class="text-light" style="text-decoration: none;" href="/view"> Cancel</a></button>
                 <button id="form-submit" class="btn btn-outline-dark col-1" type="submit" style="visibility: hidden;"> Submit</button>
               </div>

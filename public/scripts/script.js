@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", function(){
       document.getElementById("submit").setAttribute("disabled", "disabled");
       var percent = event.bytesLoaded / event.file.size * 100;
       document.getElementById("bar0").style["width"] = percent + "%";
+
     });
     image.addEventListener("progress", function(event){
       var percent = event.bytesLoaded / event.file.size * 100;
@@ -46,4 +47,31 @@ document.addEventListener("DOMContentLoaded", function(){
       document.getElementById("bar2").style["background-color"] = "green";
     });
 
+    var submitBtn = document.getElementById("submit");
+    var title = document.getElementById("title");
+    var producer = document.getElementById("producer");
+    var director = document.getElementById("director");
+    var actor = document.getElementById("actor");
+    var story = document.getElementById("story");
+    var language = document.getElementById("language");
+    var client = document.getElementById("client");
+    var selectMovie =  document.getElementById("upload_movie");
+    var img =  document.getElementById("img");
+    var trail =  document.getElementById("trailer");
+
+    const checkEnableButton = () => {
+      submitBtn.disabled = !(title.value && producer.value && director.value && actor.value && story.value && client.value && selectMovie.value 
+        && img.value && trail.value && language.value !== 'Choose')
+    }
+
+    title.addEventListener('change', checkEnableButton);
+    producer.addEventListener('change', checkEnableButton);
+    director.addEventListener('change', checkEnableButton);
+    actor.addEventListener('change', checkEnableButton);
+    story.addEventListener('change', checkEnableButton);
+    language.addEventListener('change', checkEnableButton);
+    client.addEventListener('change', checkEnableButton);
+    selectMovie.addEventListener('change', checkEnableButton);
+    img.addEventListener('change', checkEnableButton);
+    trail.addEventListener('change', checkEnableButton);
 }, false);

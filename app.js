@@ -162,7 +162,7 @@ app.get('/view', (req, res) => {
     })
     var page = req.query.page ? Number(req.query.page) : 1;
     var start = (20 * (page - 1));
-    var end = 5;
+    var end = 20;
     var sql = `SELECT * FROM movies LIMIT ${start}, ${end}`;
     connection.query(sql, (err, rows) => {
       if (err) throw err;
