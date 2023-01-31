@@ -222,40 +222,23 @@ app.post("/delete", (req,res) => {
   var trailer = req.body.trailer;
   var sql = `DELETE FROM movies WHERE movie_id="${id}"`;
 
-  if (fs.existsSync("/public/" + file)) {
-    fs.unlink("/public/" + file, (err) => {
-      if (err) {
-          console.error(err);
-      } else {
-          console.log(`File ${filePath} has been deleted.`);
-      }
-    });
-    } else {
-      console.log(`File ${file} does not exist.`);
-    }
-  if (fs.existsSync("/public/" + img)) {
-    fs.unlink("/public/" + img, (err) => {
-      if (err) {
-          console.error(err);
-      } else {
-          console.log(`File ${filePath} has been deleted.`);
-      }
-    });
-    } else {
-      console.log(`File ${img} does not exist.`);
-    }
-  if (fs.existsSync("/public/" + trailer)) {
-    fs.unlink("/public/" + trailer, (err) => {
-      if (err) {
-          console.error(err);
-      } else {
-          console.log(`File ${trailer} has been deleted.`);
-      }
-     });
-    } else {
-      console.log(`File ${trailer} does not exist.`);
-    }
+  if (fs.existsSync("public/" + file)) {
+    fs.unlinkSync("public/" + file)
+  }else{
+    console.log("File does not exist");
+  }
 
+  if (fs.existsSync("public/" + img)) {
+    fs.unlinkSync("public/" + img)
+  }else{
+    console.log("File does not exist");
+  }
+
+  if (fs.existsSync("public/" + trailer)) {
+    fs.unlinkSync("public/" + trailer)
+  }else{
+    console.log("File does not exist");
+  }
   connection.query(sql, (err) =>{
     console.log("Entry deleted");
   }) 
