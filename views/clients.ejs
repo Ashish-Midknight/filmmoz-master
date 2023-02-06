@@ -20,7 +20,30 @@
     </div>
   </nav> 
   <body>
+    <div class="row">
 
+      <% for (let i = 0; i < result.length; i++) { %>
+      <div class="col-4">
+
+        <div class="card bg-light" style="width: 25rem;">
+          <div class="card-body">
+            <h5 class="card-title">Name : <%= result[i].name %> </h5>
+            <br>
+            <h6 class="card-subtitle mb-2">Total Movies : </h6>
+            <h6 class="card-subtitle mb-2">Total Views : </h6>
+            <h6 class="card-subtitle mb-2 text-muted">Pay per view : </h6>
+            <br>
+            <a href="#" class="card-link">View Movies</a>
+          </div>
+        </div>
+
+      </div>
+        
+        
+      <% } %> 
+
+    </div>
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.2.0/chart.min.js" integrity="sha512-qKyIokLnyh6oSnWsc5h21uwMAQtljqMZZT17CIMXuCQNIfFSFF4tJdMOaJHL9fQdJUANid6OB6DRR0zdHrbWAw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+
   <%- include("partials/footer"); -%>

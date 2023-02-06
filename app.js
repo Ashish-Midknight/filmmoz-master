@@ -157,6 +157,7 @@ app.get("/newclient", (req, res) => {
     res.render("newclient", {trigger:0});
   }
 })
+
 app.post("/newclient", (req, res) => {
   var name = req.body.name;
   var contact = req.body.contact;
@@ -383,6 +384,6 @@ app.post('/notify', (req,res) => {
 
 
 
-http.listen(3000 , '192.168.1.3',  () => {
+http.listen(3000 , '192.168.1.8',  () => {
   console.log(`listening on port 3000`);
 });
