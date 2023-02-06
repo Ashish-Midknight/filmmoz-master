@@ -148,6 +148,43 @@ app.post('/upload', (req, res,) => {
 
 
 
+//-----------------clients Section-----------------//
+
+app.get("/newclient", (req, res) => {
+  if (!req.session.user) {
+    res.redirect("/");
+  } else {
+    res.render("newclient", {trigger:0});
+  }
+})
+app.post("/newclient", (req, res) => {
+  var name = req.body.name;
+  var contact = req.body.contact;
+  var email = req.body.email;
+  var sql = `INSERT INTO clients(Id, name, client_contact, client_email) VALUES ('', '${name}','${contact}','${email}')`;
+  connection.query(sql, (err) => {
+    if (err) throw err;
+  })
+  res.redirect("clients");
+})
+
+app.get('/clients', (req, res) => {
+  if (!req.session.user) {
+    res.redirect("/")
+  } else {
+    var sql = `SELECT * FROM clients`;
+    connection.query(sql, (err, result) => {
+      if (err) {
+        console.log(err);
+      } else{
+        res.render("clients", {result:result}); 
+      }
+      
+    })
+      
+  }
+  
+});
 
 
 //-----------------View Section-----------------//
@@ -346,6 +383,6 @@ app.post('/notify', (req,res) => {
 
 
 
-http.listen(3000 , '192.168.1.7',  () => {
+http.listen(3000 , '192.168.1.3',  () => {
   console.log(`listening on port 3000`);
 });
