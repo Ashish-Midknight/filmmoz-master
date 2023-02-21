@@ -9,36 +9,142 @@
       
       <div class="collapse navbar-collapse d-flex justify-content-end" id="navbarNav">
         <ul class="navbar-nav">
-            <li class="nav-item" >
-                <a class="nav-link active" href="/view"> <button class="btn btn-secondary">Uploads</button> </a>
-              </li>
               <li class="nav-item" >
-                <a class="nav-link active" href="/newclient"> <button class="btn btn-primary">New client</button> </a>
+                <a class="nav-link" href="/newclient"> <button class="btn btn-primary">New client</button> </a>
               </li>
         </ul>
+        <a class="ps-2 text-light" href="/logout"><button class="btn btn-danger">Logout</button> </a>
       </div>
     </div>
   </nav> 
-  <body>
-    <div class="row">
+  <%- include("partials/asideMenu.ejs"); -%>
+  <style>
+    .client {
+        background-color: #1f1f1f !important;
+        color: #ffffff;
+    }
+  </style>
+    <div class="row ms-auto me-0" style="max-width: 80%;">
 
       <% for (let i = 0; i < result.length; i++) { %>
-      <div class="col-4">
 
-        <div class="card bg-light" style="width: 25rem;">
+        <% var clientName = result[i].name %>
+        <% var counter = 0 %>
+        <% var viewCount = 0 %>
+        <% var priceSum = 0 %>
+        <% for(j = 0; j < movies.length; j++){ %>
+        <%  if(movies[j].client_name == clientName){ %>
+        <%     viewCount = viewCount + movies[j].view_count;  %>
+        <%     priceSum = movies[j].view_count * movies[j].price_per_view + priceSum %>
+        <%     counter++; %>
+        <%  } %>
+        <% } %>
+
+      <div class="col-12 col-lg-4">
+
+        <div class="card bg-light gap-1" style="max-width: 20rem;">
           <div class="card-body">
-            <h5 class="card-title">Name : <%= result[i].name %> </h5>
+            <h5 class="card-title">Name : <%= result[i].name %></h5> 
             <br>
-            <h6 class="card-subtitle mb-2">Total Movies : </h6>
-            <h6 class="card-subtitle mb-2">Total Views : </h6>
-            <h6 class="card-subtitle mb-2 text-muted">Pay per view : </h6>
+            <h6 class="card-subtitle mb-2 text-muted">Total Movies : <%= counter %></h6>
+            <h6 class="card-subtitle mb-2 text-muted">Total Views : <%= viewCount %></h6>
             <br>
-            <a href="#" class="card-link">View Movies</a>
+            <form action="/clientMovies" method="post">
+              <input type="text" name="name" value="<%= result[i].name %>" hidden>
+              <button class="btn btn-outline-dark me-3" type="submit">View Movies</button>
+              <a type="button" class="link-dark pe-4" data-bs-toggle="modal" data-bs-target="#Bill<%= [i] %>">
+                Bill
+              </a>
+              <a type="button" class="link-dark pe-4" data-bs-toggle="modal" data-bs-target="#history<%= [i] %>">
+                history
+              </a>
+            </form>
+            
           </div>
         </div>
 
       </div>
-        
+
+                                <!-- BILL MODAL -->
+      <div class="modal fade" id="Bill<%= [i] %>" tabindex="-1" aria-labelledby="Bill" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable">
+          <div class="modal-content">
+            <div class="modal-header">
+              <% var date = new Date(); %>
+              <%var from = date.getMonth() + "-" + date.getFullYear() %>
+              <%var to =  date.getMonth()+1 + "-" + date.getFullYear() %>
+              <h1 class="modal-title fs-5" id="exampleModalLabel"><%= from %> to <%= to %></h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+
+              <table class="table table-striped m-0"">
+                <thead>
+                  <tr>
+                    <th class="col-2" scope="col-1">Sr no.</th>
+                    <th class="col-3" scope="col-7">Name</th>
+                    <th class="col-2" scope="col-1">Views</th>
+                    <th class="col-2" scope="col-1">Price</th>
+                    <th class="col-2" scope="col-1">bill</th>
+                  </tr>
+                </thead>
+                
+                <tbody>
+                  <% for (let j = 0; j < movies.length; j++) { %>
+                  <% if(movies[j].client_name == clientName){ %>
+                  <tr>
+                    <th scope="row"> <%= j %> </th>
+                    <td><%= movies[j].title  %></td>
+                    <td><%= movies[j].view_count  %></td>
+                    <td><%= movies[j].price_per_view  %></td>
+                    <td><%= movies[j].view_count * movies[j].price_per_view  %></td>
+                  </tr>
+                  <% } %>
+                  <% } %>
+                </tbody>
+              </table>
+                
+              
+              <div class="modal-footer">
+                <h6 class="card-subtitle ms-0 me-auto">Total : <%= priceSum/100  %>&ensp; ₹</h6>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+                                            <!-- HISTORY MODAL -->
+      <div class="modal fade" id="history<%= [i] %>" tabindex="-1" aria-labelledby="Bill" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">History</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <h6 class="card-subtitle mb-2">
+               
+                <% for (let j = 0; j < movies.length; j++) { %>
+                <% if (result[i].name == movies[j].client_name) { %>
+                  <% var split = movies[j].view_history.split(".") %>
+                  <% for (let k = 0; k < split.length; k++) { %>
+                    <% var split2 = split[k].split("=")%>
+                    <p><%= console.log(split2.length) %> </p>
+                    
+                  <% } %>
+                  
+                <% } %>
+                
+                <% } %>
+                
+              </h6>
+            </div>
+          </div>
+        </div>
+      </div>
         
       <% } %> 
 
@@ -47,3 +153,5 @@
     
 
   <%- include("partials/footer"); -%>
+
+  

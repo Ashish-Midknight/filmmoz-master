@@ -33,7 +33,7 @@
               </div>
               <br>
               <div class="form-group row">
-                <label for="actor" class="col-3 col-form-label">Actor:</label> 
+                <label for="actor" class="col-3 col-form-label">Actors:</label> 
                 <div class="col-9">
                   <input id="actor" name="actor" placeholder="Actors Name" type="text" class="form-control" required="true">
                 </div>
@@ -50,7 +50,7 @@
                 <label for="language" class="col-3 col-form-label">Language:</label> 
                 <div class="col-9">
                   <select id="language" class="form-select" aria-label="Default select example" required="true" name="language">
-                    <option selected>Open this select menu</option>
+                    <option selected>Select Language</option>
                     <option value="Hindi">Hindi</option>
                     <option value="Marathi">Marathi</option>
                     <option value="English">English</option>
@@ -85,13 +85,17 @@
               </div>
               <br>
               <div class="form-group row">
-                <label for="client" class="col-3 col-form-label">Client:</label> 
+                <label for="language" class="col-3 col-form-label">Client:</label> 
                 <div class="col-9">
-                  <input id="client" name="client" placeholder="Client Name" type="text" class="form-control" required="true">
+                  <select id="client" class="form-select" aria-label="Default select example" required="true" name="client">
+                    <option selected>Select Client</option>
+                    <% for (let i = 0; i < result.length; i++) { %>
+                      <option value="<%= result[i].name%>"><%= result[i].name%></option>
+                    <% } %>
+                  </select>
                 </div>
               </div>
               <br>
-
 
 
               <div class="form-group row">
@@ -125,6 +129,13 @@
                     <div class="progress">
                       <div class="progress-bar" style="width: 0;" id="bar2" role="progressbar" aria-label="Example with label" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
+                </div>
+              </div>
+              <br>
+              <div class="form-group row">
+                <label for="director" class="col-3 col-form-label">Price per view:</label> 
+                <div class="col-9">
+                  <input id="price" name="price" placeholder="Price" type="text" class="form-control" required="true">
                 </div>
               </div>
                 <br>

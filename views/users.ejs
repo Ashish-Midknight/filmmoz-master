@@ -1,0 +1,120 @@
+<%- include("partials/header"); -%>
+<body>
+    <nav class="navbar navbar-expand navbar-dark bg-dark fixed-top ps-5 pe-2">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">Filmmoz</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse d-flex justify-content-end" id="navbarNav">
+          <ul class="navbar-nav">
+          </ul>
+          <a class="ps-2 text-light" href="/logout"><button class="btn btn-danger">Logout</button> </a>
+        </div>
+      </div>
+    </nav>
+    <%- include("partials/asideMenu.ejs"); -%>
+    <style>
+      .user {
+          background-color: #1f1f1f !important;
+          color: #ffffff;
+      }
+    </style>
+<table class="table table-striped ms-auto me-0" style="width: 85%;">
+    <thead>
+      <tr>
+        <th scope="col" style="width: 10%;">Sr no.</th>
+        <th scope="col" style="width: 40%;">Name</th>
+        <th scope="col">Plan</th>
+        <th scope="col">Ends</th>
+        <th scope="col" style="width: 10%;"></th>
+      </tr>
+    </thead>
+    
+    <tbody>
+      <% for( let i = 0; i < rows.length; i++ ) { %>
+      <tr>
+        <th scope="row"><%= rows[i].user_id %> </th>
+        <td><%= rows[i].name %></td>
+        <td><%= rows[i].subscription_pack %></td>
+        <td><%= rows[i].sub_end_date.toString().slice(4,15) %></td>
+        <td><div class="dropdown">
+            <button class="btn btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-list"></i>
+            </button>
+            <ul class="dropdown-menu">
+              <form action="/blockUser" method="post">
+                <input type="number" name="user" value="<%= rows[i].user_id %>" hidden>
+                <input type="number" name="status" value="<%= rows[i].block_status %>" hidden>
+                <% var status = rows[i].block_status %> 
+                <% if(status == 1){ %> 
+              <li><button class="dropdown-item" type="submit">Unblock User</button></li>
+              <% } else { %> 
+                <li><button class="dropdown-item" type="submit">Block User</button></li>
+                <% } %> 
+            </form>
+
+
+
+
+
+
+              
+              <li><!-- Button trigger modal -->
+                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#notify<%= [i] %> ">Send Notification</button></li>
+                
+
+              <form action="/deleteUser" method="post">
+                <input type="number" name="user" value="<%= rows[i].user_id %>" hidden>
+                <li><button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#deleteUser<%= rows[i].user_id %>">Delete user</button></li>
+            </ul>
+            <div class="modal fade" id="deleteUser<%= rows[i].user_id %>" tabindex="-1">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">Delete User?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <p>Are you sure you want to delete this user?</p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            
+          </form>
+          <form action="/notify" method="post">
+          <div class="modal fade" id="notify<%= [i] %>" tabindex="-1">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Send notification</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <input type="number" name="user" value="<%= rows[i].user_id %>" hidden>
+                  <textarea name="message" class="form-control" id="exampleFormControlTextarea1" rows="3">Your subscription will expire soon!</textarea>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary">Send</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+          </div></td>
+      </tr>
+
+      <% } %> 
+  </table>
+
+  
+  
+<%- include("partials/footer"); -%>

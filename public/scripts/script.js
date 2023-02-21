@@ -58,10 +58,11 @@ document.addEventListener("DOMContentLoaded", function(){
     var selectMovie =  document.getElementById("upload_movie");
     var img =  document.getElementById("img");
     var trail =  document.getElementById("trailer");
+    var price =  document.getElementById("price");
 
     const checkEnableButton = () => {
       submitBtn.disabled = !(title.value && producer.value && director.value && actor.value && story.value && client.value && selectMovie.value 
-        && img.value && trail.value && language.value !== 'Choose')
+        && img.value && trail.value && language.value && price.value !== 'Choose')
     }
 
     title.addEventListener('change', checkEnableButton);
@@ -74,4 +75,5 @@ document.addEventListener("DOMContentLoaded", function(){
     selectMovie.addEventListener('change', checkEnableButton);
     img.addEventListener('change', checkEnableButton);
     trail.addEventListener('change', checkEnableButton);
+    price.addEventListener('change', checkEnableButton);
 }, false);

@@ -10,6 +10,7 @@ var fs = require('fs');
 var md5 = require('md5');
 var session = require('express-session');
 const bodyParser = require('body-parser');
+var cron = require('node-cron');
 
 app.set('view engine', 'ejs');
 app.use(SocketIOFileUpload.router).listen(80);
@@ -38,6 +39,36 @@ connection.connect(function(err) {
 
 
 
+//------------------History Section-------------------//
+
+var date = new Date();
+var task = cron.schedule('* */1 * * *', () => {
+  if (date.getDate() == 1) {
+    connection.query(sql, (err, movies) => {
+      for (let i = 0; i < movies.length; i++) {
+        var split = movies[i].view_history.split("=");
+        var viewHistory = Number(movies[i].view_count);
+        var update = movies[i].view_history +"." + date.getMonth() +"/"+ date.getFullYear() + "=" +viewHistory;
+        var sql = `UPDATE movies SET view_history = "${update}" where movie_id = "${movies[i].movie_id}"`;
+        connection.query(sql, (err) => {
+          if (err) {
+            console.log(err);
+          }
+        })
+    
+      }
+      
+    })
+  }
+});
+var sql = "SELECT movie_id,view_count,view_history,price_per_view FROM movies";
+
+task.start()
+
+
+
+
+
 //------------------Upload Section-------------------//
 
 
@@ -45,7 +76,14 @@ app.get('/upload', (req, res) => {
   if (!req.session.user) {
     res.redirect("/");
   } else {
-    res.render('upload', {trigger:0});
+    var sql = "SELECT * FROM clients";
+    connection.query(sql, (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.render('upload', {trigger:0, result:result});
+      }
+    })
   }
   
 })
@@ -128,6 +166,7 @@ app.post('/upload', (req, res,) => {
   var category = [req.body.category];
   category = category.join();
   var client = req.body.client;
+  var price = req.body.price;
   var video = "localhost:3000/uploads/movies/" + movieName;
   var img = "localhost:3000/uploads/thumbnails/" + imageName;
   var trailer = "localhost:3000/uploads/trailer/" + trailerName;
@@ -136,16 +175,16 @@ app.post('/upload', (req, res,) => {
     if (result.length > 0) {
       res.render("upload", {trigger:1})
     } else {
-      var sql = `INSERT INTO movies(title,director_name,producer_name,actor_name,client_name,story,language,file_name,category,thumb_file_name,trailer) VALUES (?,?,?,?,?,?,?,?,?,?,?);`;
-      connection.query(sql, [title,director,producer,actor,client,story,language,video,category,img,trailer] ,(err) => {
-        if (err) throw err;
-      });
-      res.redirect('view');
+      var sql = `INSERT INTO movies(title,director_name,producer_name,actor_name,client_name,story,language,file_name,category,price_per_view,thumb_file_name,trailer) VALUES (?,?,?,?,?,?,?,?,?,?,?);`;
+      connection.query(sql, [title,director,producer,actor,client,story,language,video,category,price,img,trailer] ,(err) => {
+        if (err) {console.log(err)}
+      })
     }
-  })
-}
+    res.redirect('view');
+    })
+    
+    }
   });
-
 
 
 //-----------------clients Section-----------------//
@@ -174,18 +213,45 @@ app.get('/clients', (req, res) => {
     res.redirect("/")
   } else {
     var sql = `SELECT * FROM clients`;
-    connection.query(sql, (err, result) => {
+    connection.query(sql, (err, clients) => {
       if (err) {
         console.log(err);
       } else{
-        res.render("clients", {result:result}); 
+        var sql = `SELECT * FROM movies`;
+        connection.query(sql, (err, movies) => {
+          if (err) {
+            console.log(err);
+          } else{
+          res.render("clients", {result:clients, movies:movies});
+          }
+        })
       }
-      
     })
       
   }
   
 });
+
+app.post("/clientMovies", (req, res) => {
+  if (!req.session.user) {
+    res.redirect("/")
+  } else {
+    var numrows = 0;
+    var clientName = req.body.name;
+    connection.query(`SELECT COUNT(*) FROM movies WHERE client_name = "${clientName}";`, (err, result) => {
+      if (err) throw err;
+      numrows = result[0]["COUNT(*)"];
+    })
+    var page = req.query.page ? Number(req.query.page) : 1;
+    var start = (20 * (page - 1));
+    var end = 20;
+    var sql = `SELECT * FROM movies WHERE client_name = "${clientName}" LIMIT ${start}, ${end}`;
+    connection.query(sql, (err, rows) => {
+      if (err) throw err;
+      res.render("view", {rows: rows, page: page, start: start, end: end, numrows:numrows}); 
+    });
+  }
+})
 
 
 //-----------------View Section-----------------//
@@ -238,9 +304,10 @@ app.post('/edit', (req,res) => {
   var language = req.body.language;
   var category = req.body.category;
   var client = req.body.client;
+  var price = req.body.price;
   var file = req.body.file;
 
-  var sql = `UPDATE movies SET title='${title}', director_name='${director}', producer_name='${producer}', actor_name='${actor}',client_name='${client}', story='${story}', language='${language}', category='${category}' WHERE file_name='${file}';`;
+  var sql = `UPDATE movies SET title='${title}', director_name='${director}', producer_name='${producer}', actor_name='${actor}',client_name='${client}',price_per_view='${price}', story='${story}', language='${language}', category='${category}' WHERE file_name='${file}';`;
   connection.query(sql, (err) => {
   });
   res.redirect('/view');
@@ -258,6 +325,7 @@ app.post("/delete", (req,res) => {
   var file = req.body.file;
   var img = req.body.img;
   var trailer = req.body.trailer;
+  var client = req.body.client;
   var sql = `DELETE FROM movies WHERE movie_id="${id}"`;
 
   if (fs.existsSync("public/" + file)) {
@@ -280,6 +348,7 @@ app.post("/delete", (req,res) => {
   connection.query(sql, (err) =>{
     console.log("Entry deleted");
   }) 
+
   res.redirect("/view");
 }
 })
@@ -287,18 +356,26 @@ app.post("/delete", (req,res) => {
 
 
 //--------------------------Login-----------------------//
+
 app.get("/", (req,res) => {
   if (!req.session.user) {
     res.render("index");
   } else {
-    var userCount = undefined;
-        var sql = `SELECT * FROM user`;
-        var count = `SELECT COUNT(*) FROM user`;
-        connection.query(count, (err, row) => {
-          userCount = row['COUNT(*)']; 
+    var userCount = 0;
+    var clientCount = 0;
+    var movieCount = 0;
+    var user = `SELECT COUNT(*) FROM user`;
+        connection.query(user, (err, row) => {
+          userCount = row[0]['COUNT(*)'];
         });
-        connection.query(sql, (err, rows) => {
-          res.render("dashboard", {userCount: userCount, rows:rows}); 
+    var client = `SELECT COUNT(*) FROM clients`;
+        connection.query(client, (err, row) => {
+          clientCount = row[0]['COUNT(*)']; 
+        });
+    var movie = `SELECT COUNT(*) FROM movies`;
+        connection.query(movie, (err, row) => {
+          movieCount = row[0]['COUNT(*)']; 
+          res.render("dashboard", {userCount:userCount, clientCount:clientCount, movieCount:movieCount});
         });
   }
 });
@@ -333,6 +410,19 @@ app.post("/login", (req, res) => {
 })
 
 
+//------------------------- User------------------------//
+
+app.get("/user", (req, res) => {
+  if (!req.session.user) {
+    res.redirect("/")
+  } else {
+    var userCount = undefined;
+        var sql = `SELECT * FROM user`;
+        connection.query(sql, (err, rows) => {
+          res.render("users", {userCount: userCount, rows:rows}); 
+        });
+  }
+})
 
 //-------------------------Block User------------------------//
 app.post('/blockUser', (req, res) => {
