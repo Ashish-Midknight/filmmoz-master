@@ -35,45 +35,69 @@
         <% for(j = 0; j < movies.length; j++){ %>
         <%  if(movies[j].client_name == clientName){ %>
         <%     viewCount = viewCount + movies[j].view_count;  %>
-        <%     priceSum = movies[j].view_count * movies[j].price_per_view + priceSum %>
+        <%     priceSum = (movies[j].view_count - movies[j].pre_month_views)  * movies[j].price_per_view + priceSum %>
         <%     counter++; %>
         <%  } %>
         <% } %>
 
-      <div class="col-12 col-lg-4">
+      <div class="col-12 col-lg-4 mb-4">
 
-        <div class="card bg-light gap-1" style="max-width: 20rem;">
+        <div class="card bg-info bg-opacity-10 h-100" style="max-width: 20rem;">
           <div class="card-body">
-            <h5 class="card-title">Name : <%= result[i].name %></h5> 
+            <h5 class="card-title d-flex justify-content-between align-items-center"><%= result[i].name %> </h5>    
+
+
+            
             <br>
-            <h6 class="card-subtitle mb-2 text-muted">Total Movies : <%= counter %></h6>
-            <h6 class="card-subtitle mb-2 text-muted">Total Views : <%= viewCount %></h6>
+            <h6 class="card-subtitle mb-2 text-muted d-flex justify-content-between"><span>Total Movies</span>   <span><%= counter %></span></h6>
+            <hr>
+            <h6 class="card-subtitle mb-2 text-muted d-flex justify-content-between"><span>Total Views</span>  <span><%= viewCount %></span></h6>
             <br>
-            <form action="/clientMovies" method="post">
+            <form action="/clientMovies" class="text-center" method="post">
               <input type="text" name="name" value="<%= result[i].name %>" hidden>
-              <button class="btn btn-outline-dark me-3" type="submit">View Movies</button>
-              <a type="button" class="link-dark pe-4" data-bs-toggle="modal" data-bs-target="#Bill<%= [i] %>">
-                Bill
+              <button class="btn btn-outline-dark m-auto w-100" type="submit">View Movies</button>
+            </form>
+         
+          </div>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item bg-info bg-opacity-10">
+              <a type="button" class="text-decoration-none link-dark d-flex justify-content-between" data-bs-toggle="modal" data-bs-target="#Bill<%= [i] %>">
+                <span>Bill</span> <span><%= priceSum /100  %>  ₹</span>  
               </a>
-              <a type="button" class="link-dark pe-4" data-bs-toggle="modal" data-bs-target="#history<%= [i] %>">
+            </li>
+            <li class="list-group-item bg-info bg-opacity-10">
+              <a type="button" class="text-decoration-none link-dark " data-bs-toggle="modal" data-bs-target="#history<%= [i] %>">
                 history
               </a>
-            </form>
-            
-          </div>
+            </li>
+            <li class="list-group-item d-flex bg-info bg-opacity-10">
+
+              <div class="btn-group bg-info bg-opacity-25 w-100" role="group" aria-label="Default button group">
+                <button type="button" class="btn btn-outline-dark border-0" data-bs-toggle="modal" data-bs-target="#delete<%= [i] %>">
+                  <i class="bi bi-trash-fill" style="font-size: larger;"></i>
+                </button>
+                <button type="button" class="btn btn-outline-dark border-0"  data-bs-toggle="modal" data-bs-target="#edit<%= [i] %>">
+                  <i class="bi bi-pen-fill" style="font-size: large;"></i>
+                </button>
+                <button type="button" class="btn btn-outline-dark border-0" data-bs-toggle="modal" data-bs-target="#info<%= [i] %>">
+                  <i class="bi bi-info-square-fill" style="font-size: large;"></i>
+                </button>
+              </div>
+
+            </li>
+          </ul>
         </div>
 
       </div>
 
                                 <!-- BILL MODAL -->
       <div class="modal fade" id="Bill<%= [i] %>" tabindex="-1" aria-labelledby="Bill" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
           <div class="modal-content">
             <div class="modal-header">
               <% var date = new Date(); %>
-              <%var from = date.getMonth() + "-" + date.getFullYear() %>
-              <%var to =  date.getMonth()+1 + "-" + date.getFullYear() %>
-              <h1 class="modal-title fs-5" id="exampleModalLabel"><%= from %> to <%= to %></h1>
+              <%var from = date.getMonth()+1 + "-" + date.getFullYear() %>
+              <h1 class="modal-title fs-5" id="exampleModalLabel"><%= from %></h1>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -94,11 +118,11 @@
                   <% for (let j = 0; j < movies.length; j++) { %>
                   <% if(movies[j].client_name == clientName){ %>
                   <tr>
-                    <th scope="row"> <%= j %> </th>
+                    <td><%= movies[j].movie_id %> </th>
                     <td><%= movies[j].title  %></td>
-                    <td><%= movies[j].view_count  %></td>
+                    <td><%= movies[j].view_count - movies[j].pre_month_views  %></td>
                     <td><%= movies[j].price_per_view  %></td>
-                    <td><%= movies[j].view_count * movies[j].price_per_view  %></td>
+                    <td><%= ((movies[j].view_count - movies[j].pre_month_views)  * movies[j].price_per_view) / 100  %></td>
                   </tr>
                   <% } %>
                   <% } %>
@@ -118,7 +142,7 @@
 
                                             <!-- HISTORY MODAL -->
       <div class="modal fade" id="history<%= [i] %>" tabindex="-1" aria-labelledby="Bill" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
           <div class="modal-content">
             <div class="modal-header">
               <h1 class="modal-title fs-5" id="exampleModalLabel">History</h1>
@@ -126,25 +150,137 @@
             </div>
             <div class="modal-body">
               <h6 class="card-subtitle mb-2">
-               
-                <% for (let j = 0; j < movies.length; j++) { %>
-                <% if (result[i].name == movies[j].client_name) { %>
-                  <% var split = movies[j].view_history.split(".") %>
-                  <% for (let k = 0; k < split.length; k++) { %>
-                    <% var split2 = split[k].split("=")%>
-                    <p><%= console.log(split2.length) %> </p>
-                    
-                  <% } %>
+
+                <table class="table m-0"">
+                  <thead>
+                    <tr>
+                      <th class="col" scope="col-1">Date</th>
+                      <th class="col" scope="col-1">Bill</th>
+                    </tr>
+
+                  </thead>
                   
-                <% } %>
+                  <tbody>
+                    <% for (let j = 0; j < history.length; j++) { %>
+                      <% if(history[j].client_name == clientName){ %>
+                    <tr>
+                      <td><%= history[j].date.toString().slice(0,10) %></td>
+                      <td><%= history[j].total_bill / 100%></td>
+
+                    </tr>
+                    <% } %>
+                  <% } %>
+                  </tbody>
+                </table>
                 
-                <% } %>
                 
               </h6>
             </div>
           </div>
         </div>
       </div>
+
+
+
+      <div class="modal fade" id="delete<%= [i] %>" tabindex="-1" aria-labelledby="delete<%= [i] %>" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <form action="/deleteClient" method="post">
+            <div class="modal-header">
+              
+              <h1 class="modal-title fs-5" id="delete<%= [i] %>">DELETE!</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              Are you sure you want to delete client <strong><%= clientName %></strong>
+              <input type="text" name="id" value="<%= result[i].Id %>" hidden>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">DELETE!</button>
+            </div>
+          </form>
+          </div>
+        </div>
+      </div>                            
+
+
+
+      <div class="modal fade" id="edit<%= [i] %>" tabindex="-1" aria-labelledby="edit<%= [i] %>" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <form id="client-form" action="/editClient" method="post" enctype='application/x-www-form-urlencoded'>
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="edit<%= [i] %>">Edit Client details</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+
+              
+                <div class="mb-3 col">
+                    <label for="name" class="form-label">Name :</label>
+                    <input type="text" class="form-control" name="name" placeholder="Name" required value="<%= clientName %>">
+                </div>
+                <div class="mb-3 col">
+                    <label for="Contact" class="form-label">Contact :</label>
+                    <input type="number" class="form-control" name="contact" placeholder="Contact" required value="<%= result[i].client_contact %>">
+                </div>
+                <div class="mb-3 col">
+                    <label for="email" class="form-label">Email :</label>
+                    <input type="email" class="form-control" name="email" placeholder="Email" required value="<%= result[i].client_email %>">
+                </div>
+                <div class="mb-3 col-6">
+                  <label for="Aadhar" class="form-label">Update Aadhar card :</label>
+                  <input type="file" class="form-control" name="Aadhar" placeholder="Aadhar card">
+                </div>
+                <div class="mb-3 col-6">
+                  <label for="Pan" class="form-label">Update Pan card :</label>
+                  <input type="file" class="form-control" name="Pan" placeholder="Pan card">
+                </div>
+
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Save changes</button>
+            </div>
+          </form>
+          </div>
+        </div>
+      </div> 
+
+
+
+      <div class="modal fade" id="info<%= [i] %>" tabindex="-1" aria-labelledby="info<%= [i] %>" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="info<%= [i] %>"><%= clientName %></h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+             <p>Contact no. : <%= result[i].client_contact %></p>
+             <hr>
+             <p>Email : <%= result[i].client_email %></p>
+             <hr>
+             <form action="/aadhar" method="post">
+              <input type="text" name="aadhar" value="<%= result[i].aadhar %>" hidden>
+              <button class="btn border-0" type="submit">Aadhar</button>
+             </form>
+             <hr>
+             <form action="/pan" method="post">
+              <input type="text" name="pan" value="<%= result[i].pan %>" hidden>
+              <button class="btn border-0" type="submit">Pan</button>
+             </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div> 
+
         
       <% } %> 
 

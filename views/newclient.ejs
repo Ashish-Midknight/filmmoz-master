@@ -10,7 +10,7 @@
         <% if(trigger == 1) { %> 
           <p style="color: red;">Already Exist!</p>
         <% } %> 
-        <form id="client-form" action="/newclient" method="post" enctype='application/x-www-form-urlencoded'>
+        <form id="client-form" action="/newclient" method="post" enctype='multipart/form-data'>
             <div class="mb-3 col-6">
                 <label for="name" class="form-label">Name :</label>
                 <input type="text" class="form-control" name="name" placeholder="Name" required>
@@ -23,9 +23,17 @@
                 <label for="email" class="form-label">Email :</label>
                 <input type="email" class="form-control" name="email" placeholder="Email" required>
             </div>
+            <div class="mb-3 col-6">
+              <label for="Aadhar" class="form-label">Aadhar card :</label>
+              <input type="file" class="form-control" name="Aadhar" placeholder="Aadhar card" required>
+            </div>
+            <div class="mb-3 col-6">
+              <label for="Pan" class="form-label">Pan card :</label>
+              <input type="file" class="form-control" name="Pan" placeholder="Pan card" required>
+            </div>
 
                 <button id="submit" class="btn btn-outline-dark col-1" type="submit"> Submit</button>
-                <button class="btn btn-danger col-1 mx-5"><a class="text-light" style="text-decoration: none;" href="/view"> Cancel</a></button>
+                <button class="btn btn-danger col-1 mx-5"><a class="text-light" style="text-decoration: none;" href="/clients"> Cancel</a></button>
               </div>
         </form>
         <br>

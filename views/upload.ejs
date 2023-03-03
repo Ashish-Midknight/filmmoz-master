@@ -90,13 +90,13 @@
                   <select id="client" class="form-select" aria-label="Default select example" required="true" name="client">
                     <option selected>Select Client</option>
                     <% for (let i = 0; i < result.length; i++) { %>
-                      <option value="<%= result[i].name%>"><%= result[i].name%></option>
+                      <option value="<%= result[i].name%>/<%= result[i].Id%>"><%= result[i].name%></option>
                     <% } %>
                   </select>
                 </div>
               </div>
               <br>
-
+              
 
               <div class="form-group row">
                 <label class="col-3 col-form-label" for="file">Select Movie:</label>

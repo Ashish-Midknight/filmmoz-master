@@ -44,19 +44,19 @@
                 <div class="card-body">
                     
                   <h5 class="card-title"><%= rows[i].title %></h5>
-                  <div class="row">
-                    <div class="col">
+
+                    <div class="row">
                         <p class="card-text">category : <%= rows[i].category %></p>
-                        <p class="card-text">client name : <%= rows[i].client_name %> </p>
                     </div>
-                    <div class="col">
-                        <p class="card-text">view count : <%= rows[i].view_count %> </p>
+                    <div class="row">
+                      <p class="card-text col m-0 mt-2">client name : <%= rows[i].client_name %> </p>
+                      <p class="card-text col m-0 mt-2">view count : <%= rows[i].view_count %> </p>
                     </div>
-                  </div>
+
                   <p class="card-text"><small class="text-muted">Uploaded on: <%= rows[i].upload_time %> </small></p>
                 </div>
               </div>
-              <div class="col-1 d-flex justify-content-center h-300 flex-wrap bd-highlight m-auto mb-3">
+              <div class="col-1 d-flex justify-content-center flex-wrap bd-highlight m-auto mb-3">
                 <%- include("partials/editmodal.ejs", {i:i, rows:rows}); -%>
                 <%- include("partials/viewmodal.ejs", {i:i, rows:rows}); -%>
                 <%- include("partials/deletemodal.ejs",  {i:i, rows:rows}); -%>
