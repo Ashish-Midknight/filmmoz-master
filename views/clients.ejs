@@ -1,5 +1,5 @@
 <%- include("partials/header"); -%>
-<body>
+<body style="padding: 7% 3%;">
   <nav class="navbar navbar-expand navbar-dark bg-dark fixed-top ps-5 pe-2">
     <div class="container-fluid">
       <a class="navbar-brand" href="/">Filmmoz</a>
@@ -19,6 +19,9 @@
   </nav> 
   <%- include("partials/asideMenu.ejs"); -%>
   <style>
+    .bg-custom {
+      background-color: #e0e0e0;
+    }
     .client {
         background-color: #1f1f1f !important;
         color: #ffffff;
@@ -42,16 +45,16 @@
 
       <div class="col-12 col-lg-4 mb-4">
 
-        <div class="card bg-info bg-opacity-10 h-100" style="max-width: 20rem;">
+        <div class="card h-100 bg-custom text-dark shadow-lg" style="max-width: 20rem;">
           <div class="card-body">
-            <h5 class="card-title d-flex justify-content-between align-items-center"><%= result[i].name %> </h5>    
+            <h5 class="card-title d-flex justify-content-between align-items-center text-uppercase"><%= result[i].name %> </h5>    
 
 
             
             <br>
-            <h6 class="card-subtitle mb-2 text-muted d-flex justify-content-between"><span>Total Movies</span>   <span><%= counter %></span></h6>
+            <h6 class="card-subtitle mb-2 text-dark d-flex justify-content-between"><span>Total Movies</span>   <span><%= counter %></span></h6>
             <hr>
-            <h6 class="card-subtitle mb-2 text-muted d-flex justify-content-between"><span>Total Views</span>  <span><%= viewCount %></span></h6>
+            <h6 class="card-subtitle mb-2 text-dark d-flex justify-content-between"><span>Total Views</span>  <span><%= viewCount %></span></h6>
             <br>
             <form action="/clientMovies" class="text-center" method="post">
               <input type="text" name="name" value="<%= result[i].name %>" hidden>
@@ -59,20 +62,20 @@
             </form>
          
           </div>
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item bg-info bg-opacity-10">
+          <ul class="list-group list-group-flush bg-custom text-dark">
+            <li class="list-group-item bg-custom bg-opacity-10 text-dark">
               <a type="button" class="text-decoration-none link-dark d-flex justify-content-between" data-bs-toggle="modal" data-bs-target="#Bill<%= [i] %>">
-                <span>Bill</span> <span><%= priceSum /100  %>  ₹</span>  
+                <span><i class="bi bi-receipt"></i>&ensp; Bill</span> <span><%= priceSum /100  %>  ₹</span>  
               </a>
             </li>
-            <li class="list-group-item bg-info bg-opacity-10">
+            <li class="list-group-item bg-custom text-dark">
               <a type="button" class="text-decoration-none link-dark " data-bs-toggle="modal" data-bs-target="#history<%= [i] %>">
-                history
+                <i class="bi bi-clock-history"></i>&ensp; history
               </a>
             </li>
-            <li class="list-group-item d-flex bg-info bg-opacity-10">
+            <li class="list-group-item d-flex bg-custom text-dark">
 
-              <div class="btn-group bg-info bg-opacity-25 w-100" role="group" aria-label="Default button group">
+              <div class="btn-group w-100" role="group" aria-label="Default button group">
                 <button type="button" class="btn btn-outline-dark border-0" data-bs-toggle="modal" data-bs-target="#delete<%= [i] %>">
                   <i class="bi bi-trash-fill" style="font-size: larger;"></i>
                 </button>
@@ -156,6 +159,7 @@
                     <tr>
                       <th class="col" scope="col-1">Date</th>
                       <th class="col" scope="col-1">Bill</th>
+                      <th class="col" scope="col-1">Views</th>
                     </tr>
 
                   </thead>
@@ -166,7 +170,7 @@
                     <tr>
                       <td><%= history[j].date.toString().slice(0,10) %></td>
                       <td><%= history[j].total_bill / 100%></td>
-
+                      <td><%= history[j].total_views%></td>
                     </tr>
                     <% } %>
                   <% } %>
@@ -209,15 +213,14 @@
       <div class="modal fade" id="edit<%= [i] %>" tabindex="-1" aria-labelledby="edit<%= [i] %>" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
-            <form id="client-form" action="/editClient" method="post" enctype='application/x-www-form-urlencoded'>
+            
             <div class="modal-header">
               <h1 class="modal-title fs-5" id="edit<%= [i] %>">Edit Client details</h1>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-
-
-              
+              <form id="client-form" action="/editClient" method="post" enctype='application/x-www-form-urlencoded'>
+              <input type="text" name="id" value="<%= result[i].Id %>" hidden>
                 <div class="mb-3 col">
                     <label for="name" class="form-label">Name :</label>
                     <input type="text" class="form-control" name="name" placeholder="Name" required value="<%= clientName %>">
@@ -230,22 +233,37 @@
                     <label for="email" class="form-label">Email :</label>
                     <input type="email" class="form-control" name="email" placeholder="Email" required value="<%= result[i].client_email %>">
                 </div>
+                <button type="submit" class="btn btn-primary">Save changes</button>
+              </form>
                 <div class="mb-3 col-6">
-                  <label for="Aadhar" class="form-label">Update Aadhar card :</label>
-                  <input type="file" class="form-control" name="Aadhar" placeholder="Aadhar card">
+                  <form action="/updateAadhar" method="post" enctype="multipart/form-data">
+                    <label for="Aadhar" class="form-label">Update Aadhar card :</label>
+                    <input type="text" name="id" value="<%= result[i].Id %>" hidden>
+                    <input type="text" name="loc" value="<%= result[i].aadhar %>" hidden>
+                    <input type="file" class="form-control" name="Aadhar" placeholder="Aadhar card" onchange="submit(this)">
+                  </form>
                 </div>
                 <div class="mb-3 col-6">
-                  <label for="Pan" class="form-label">Update Pan card :</label>
-                  <input type="file" class="form-control" name="Pan" placeholder="Pan card">
+                  <form action="/updatePan" method="post" enctype="multipart/form-data">
+                    <label for="Pan" class="form-label">Update Pan card :</label>
+                    <input type="text" name="id" value="<%= result[i].Id %>" hidden>
+                    <input type="text" name="loc" value="<%= result[i].pan %>" hidden>
+                    <input type="file" class="form-control" name="Pan" placeholder="Pan card" onchange="submit(this)">
+                  </form>
                 </div>
 
+                <script>
+                  function submit(e){
+                    this.form.submit()
+                  };
+                </script>
 
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-primary">Save changes</button>
+              
             </div>
-          </form>
+          
           </div>
         </div>
       </div> 

@@ -289,14 +289,79 @@ app.post("/clientMovies", (req, res) => {
 
 app.post("/deleteClient", (req, res) => {
   var clientid = req.body.id;
-  connection.query(`DELETE FROM clients WHERE Id = ${clientid}`, (err) => {
-    if(err){
-      console.log(err);
+  var sql = `SELECT * FROM clients WHERE Id = ${clientid}`;
+  connection.query(sql, (err, result) => {
+    var sql = `INSERT INTO recycle (Id, name, client_contact, client_email, aadhar, pan) VALUES ('${result[0].Id}', '${result[0].name}','${result[0].contact}','${result[0].email}', '${result[0].aadhar}', '${result[0].pan}')`
+    connection.query(sql, (err) => {  
+      connection.query(`DELETE FROM clients WHERE Id = ${clientid}`, (err) => {
+        if(err){
+          console.log(err);
+        }
+        res.redirect('/clients');
+      })
+    });  
+  });
+
+});
+
+app.post("/editClient", (req, res) => {
+  var id = req.body.id;
+  var name = req.body.name;
+  var contact = req.body.contact;
+  var email = req.body.email;
+  var client = `UPDATE clients SET name ='${name}',client_contact ='${contact}',client_email ='${email}' WHERE Id = ${id}`;
+  connection.query(client, (err) => {
+    if (err) {
+      res.send("something went wrong!")
     }
+  })
+  var movies = `UPDATE movies SET client_name ='${name}' WHERE client_id = ${id}`;
+  connection.query(movies, (err) => {
+    if (err) {
+      res.send("something went wrong!")
+    }
+  })
+  var history = `UPDATE history SET client_name ='${name}' WHERE client_id = ${id}`;
+  connection.query(history, (err) => {
+    if (err) {
+      res.send("something went wrong!")
+    }
+  })
+  res.redirect('/clients');
+})
+
+app.post("/updateAadhar",upload.single("Aadhar"), (req,res) => {
+  if (fs.existsSync(req.body.loc)) {
+    fs.unlinkSync(req.body.loc)
+  }else{
+    console.log("File does not exist");
+  }
+  var sql = `UPDATE clients SET aadhar = "${req.file.destination +"/"+ req.file.originalname}" WHERE Id = ${req.body.id}`
+  connection.query(sql, (err) => {
+    if (err) {
+     res.send("Something went wrong!")
+    }
+  })
+
+  res.redirect('/clients');
+})
+app.post("/updatePan",upload.single("Pan"), (req,res) => {
+  if (fs.existsSync(req.body.loc)) {
+    fs.unlinkSync(req.body.loc)
+  }else{
+    console.log("File does not exist");
+  }
+  var sql = `UPDATE clients SET pan = "${req.file.destination +"/"+ req.file.originalname}" WHERE Id = ${req.body.id}`
+  connection.query(sql, (err) => {
+    if (err) {
+      res.send("Something went wrong!")
+    }
+  })
+  
     res.redirect('/clients');
   })
 
-});
+
 
 app.post("/aadhar", (req, res) => {
   res.sendFile(__dirname + "/" + req.body.aadhar)
@@ -524,6 +589,6 @@ app.post('/notify', (req,res) => {
 
 
 
-http.listen(3000 , '192.168.1.22',  () => {
+http.listen(3000 , '192.168.1.7',  () => {
   console.log(`listening on port 3000`);
 });
