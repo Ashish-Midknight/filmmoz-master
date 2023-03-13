@@ -1,0 +1,80 @@
+<%- include("partials/header"); -%>
+<body style="padding: 7% 3%;">
+  <nav class="navbar navbar-expand navbar-dark bg-dark fixed-top ps-5 pe-2">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/">Filmmoz</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      
+      <div class="collapse navbar-collapse d-flex justify-content-end" id="navbarNav">
+
+        <a class="ps-2 text-light" href="/logout"><button class="btn btn-danger">Logout</button> </a>
+      </div>
+    </div>
+  </nav> 
+  <%- include("partials/asideMenu.ejs"); -%>
+  <style>
+    .bg-custom {
+      background-color: #e0e0e0;
+    }
+    .package {
+        background-color: #3d3d3d !important;
+        color: #ffffff;
+    }
+  </style>
+    
+    <div class="w-75 mx-auto me-5">
+    
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                      <h5 class="card-title  text-center">New Pack</h5>
+                      <form action="/addPack" method="post">
+
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Pack Name :</label>
+                            <input type="text" class="form-control" id="name" placeholder="Elite" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="price" class="form-label">Price :</label>
+                            <input type="number" class="form-control" id="price" placeholder="499" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="duration" class="form-label">Duration(in month) :</label>
+                            <input type="number" class="form-control" id="duration" placeholder="1" required>
+                        </div>
+                        <br>
+                        <button type="submit" class="btn btn-primary w-100">Add</button>
+                      </form>
+                    </div>
+                  </div>
+            </div>
+            <div class="col d-flex justify-content-center h-100">
+                <div class="card w-75">
+                    <div class="card-header text-light" style="background-color: #ff5100;">
+                      Name
+                    </div>
+                    <div class="card-body text-center">
+                      <blockquote class="blockquote mb-0">
+                        <p><span class="fs-3 fw-bold">₹ 99 </span>/ 1 Month</p>
+                        <div class="btn-group" role="group" aria-label="Basic example">
+                            <button type="button" class="btn btn-outline-danger px-4">Edit</button>
+                            <button type="button" class="btn btn-outline-danger px-3">Delete</button>
+                          </div>
+                      </blockquote>
+                    </div>
+                  </div>
+            </div>
+        </div>
+
+
+    </div>
+    
+    
+    
+
+  <%- include("partials/footer"); -%>
+
+  

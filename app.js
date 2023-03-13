@@ -612,6 +612,17 @@ app.post('/notify', (req,res) => {
 
 
 
+//-----------------Package Section-----------------//
+app.get("/package", (req, res) => {
+  if (!req.session.user) {
+    res.redirect("/")
+  } else {
+  res.render("package")
+  }
+})
+
+
+
 http.listen(3000 , '192.168.1.7',  () => {
   console.log(`listening on port 3000`);
 });
