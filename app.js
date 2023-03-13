@@ -291,7 +291,7 @@ app.post("/deleteClient", (req, res) => {
   var clientid = req.body.id;
   var sql = `SELECT * FROM clients WHERE Id = ${clientid}`;
   connection.query(sql, (err, result) => {
-    var sql = `INSERT INTO recycle (Id, name, client_contact, client_email, aadhar, pan) VALUES ('${result[0].Id}', '${result[0].name}','${result[0].contact}','${result[0].email}', '${result[0].aadhar}', '${result[0].pan}')`
+    var sql = `INSERT INTO recycle (Id, name, client_contact, client_email, aadhar, pan) VALUES ('${result[0].Id}', '${result[0].name}','${result[0].client_contact}','${result[0].client_email}', '${result[0].aadhar}', '${result[0].pan}')`
     connection.query(sql, (err) => {  
       connection.query(`DELETE FROM clients WHERE Id = ${clientid}`, (err) => {
         if(err){
@@ -302,6 +302,20 @@ app.post("/deleteClient", (req, res) => {
     });  
   });
 
+});
+
+app.post("/restore", (req, res) => {
+  var id = req.body.id;
+  var name = req.body.name;
+  var contact = req.body.contact;
+  var email = req.body.email;
+  var aadhar = req.body.aadhar;
+  var pan = req.body.pan;
+  var sql = `INSERT INTO clients(Id, name, client_contact, client_email, aadhar, pan) VALUES (${id}, '${name}', '${contact}', '${email}', '${aadhar}', '${pan}')`
+  connection.query(sql, (err) => {
+    connection.query(`DELETE FROM recycle WHERE Id = ${id}`)
+  })
+  res.redirect("/clients")
 });
 
 app.post("/editClient", (req, res) => {
@@ -369,6 +383,14 @@ app.post("/aadhar", (req, res) => {
 app.post("/pan", (req, res) => {
   res.sendFile(__dirname + "/" + req.body.pan)
 })
+
+app.get("/recycle", (req,res) => {
+  connection.query(`SELECT * FROM recycle`, (err,result) => {
+    res.render("recycle", {result:result})
+  })
+  
+})
+
 
 //-----------------View Section-----------------//
 app.get('/view', (req, res) => {
@@ -553,8 +575,9 @@ app.post('/blockUser', (req, res) => {
   }
   connection.query(sql, (err) => {
     if(err){console.log(err)};
+    res.redirect('/user');
   })
-  res.redirect('/');
+  
 }
 })
 
@@ -568,7 +591,7 @@ app.post('/deleteUser', (req, res) => {
   connection.query(sql, (err) => {
     if(err){console.log(err)};
   })
-  res.redirect('/');
+  res.redirect('/user');
 }
 })
 
@@ -583,7 +606,7 @@ app.post('/notify', (req,res) => {
   connection.query(sql, (err) => {
     if(err){console.log(err)};
   })
-  res.redirect('/');
+  res.redirect('/user');
 }
 })
 
