@@ -31,3 +31,6 @@ body{
     opacity: 0.3;
     visibility: hidden;
 }
+.nav-link {
+    color: black;
+}

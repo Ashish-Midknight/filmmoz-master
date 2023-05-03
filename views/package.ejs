@@ -1,6 +1,6 @@
 <%- include("partials/header"); -%>
 <body style="padding: 7% 3%;">
-  <nav class="navbar navbar-expand navbar-dark bg-dark fixed-top ps-5 pe-2">
+  <nav class="navbar navbar-expand navbar-dark bg-dark fixed-top ps-5 pe-2 py-3">
     <div class="container-fluid">
       <a class="navbar-brand" href="/">Filmmoz</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,15 +35,15 @@
 
                         <div class="mb-3">
                             <label for="name" class="form-label">Pack Name :</label>
-                            <input type="text" class="form-control" id="name" placeholder="Elite" required>
+                            <input type="text" class="form-control" id="name" name="name" placeholder="Elite" required>
                         </div>
                         <div class="mb-3">
                             <label for="price" class="form-label">Price :</label>
-                            <input type="number" class="form-control" id="price" placeholder="499" required>
+                            <input type="number" class="form-control" id="price" name="price" placeholder="499" required>
                         </div>
                         <div class="mb-3">
-                            <label for="duration" class="form-label">Duration(in month) :</label>
-                            <input type="number" class="form-control" id="duration" placeholder="1" required>
+                            <label for="duration" class="form-label">Duration(in days) :</label>
+                            <input type="number" class="form-control" id="duration" name="time" placeholder="1" required>
                         </div>
                         <br>
                         <button type="submit" class="btn btn-primary w-100">Add</button>
@@ -51,22 +51,90 @@
                     </div>
                   </div>
             </div>
-            <div class="col d-flex justify-content-center h-100">
-                <div class="card w-75">
+
+            
+              
+              <div class="col d-flex flex-column justify-content-center h-100">
+                <% for (let i = 0; i < result.length; i++) { %>
+                <div class="card w-75 mb-3 mx-auto">
                     <div class="card-header text-light" style="background-color: #ff5100;">
-                      Name
+                      <%= result[i].p_name %>
                     </div>
                     <div class="card-body text-center">
                       <blockquote class="blockquote mb-0">
-                        <p><span class="fs-3 fw-bold">₹ 99 </span>/ 1 Month</p>
+                        <p><span class="fs-3 fw-bold">₹ <%= result[i].price %> </span>/ <%= result[i].dur_month %> days</p>
                         <div class="btn-group" role="group" aria-label="Basic example">
-                            <button type="button" class="btn btn-outline-danger px-4">Edit</button>
-                            <button type="button" class="btn btn-outline-danger px-3">Delete</button>
+                            <button type="button" class="btn btn-outline-danger px-4" data-bs-toggle="modal" data-bs-target="#editModal<%= [i] %>">Edit</button>
+                            <button type="button" class="btn btn-outline-danger px-3" data-bs-toggle="modal" data-bs-target="#deleteModal<%= [i] %>">Delete</button>
                           </div>
                       </blockquote>
                     </div>
                   </div>
+
+
+                  <div class="modal fade" id="editModal<%= [i] %>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <form action="/editPack" method="post">
+                        <div class="modal-header">
+                          <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Pack</h1>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          <div class="mb-3">
+                            <label for="name" class="form-label">Pack Name :</label>
+                            <input type="text" class="form-control" id="name" name="name" value="<%= result[i].p_name %>" required>
+                          </div>
+                          <div class="mb-3">
+                            <label for="price" class="form-label">Price :</label>
+                            <input type="number" class="form-control" id="price" name="price" value="<%= result[i].price %>" required>
+                          </div>
+                          <div class="mb-3">
+                            <label for="duration" class="form-label">Duration(in days) :</label>
+                            <input type="number" class="form-control" id="duration" name="time" value="<%= result[i].dur_month %>" required>
+                          </div>
+                        </div>
+                        <input type="text" name="id" value="<%= result[i].id %>" hidden>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          <button type="submit" class="btn btn-primary">Save changes</button>
+                        </div>
+                      </form>
+                      </div>
+                    </div>
+                  </div>
+
+
+                  <div class="modal fade" id="deleteModal<%= [i] %>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <form action="/deletePack" method="post">
+                        <div class="modal-header">
+                          <h1 class="modal-title fs-5" id="exampleModalLabel">Delete Pack</h1>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          Delete <%= result[i].p_name %> Pack ?
+                          <input type="text" name="id" value="<%= result[i].id %>" hidden>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          <button type="submit" class="btn btn-primary">Delete</button>
+                        </div>
+                      </form>
+                      </div>
+                    </div>
+                  </div>
+
+
+
+
+
+                  <% } %>
             </div>
+              
+            
+            
         </div>
 
 

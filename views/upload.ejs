@@ -1,5 +1,10 @@
 <%- include("partials/header"); -%>
 <body style="padding: 2% 10%;">
+  <style>
+    .form-check {
+      width: 11%;
+    }
+  </style>
 <section>
     <div class="col">
       <div class="row">
@@ -11,42 +16,42 @@
           <p style="color: red;">Already Exist!</p>
         <% } %> 
         <form id="upload-form" action="/upload" method="post" enctype='application/x-www-form-urlencoded'>
-              <div class="form-group row">
+              <div class="form-group row p-0 m-0">
                 <label for="title" class="col-3 col-form-label">Movie Title:</label> 
                 <div class="col-9">
                   <input id="title" name="title" placeholder="Movie Title" type="text" required="required" class="form-control" required="true">
                 </div>
               </div>
               <br>
-              <div class="form-group row">
+              <div class="form-group row p-0 m-0">
                 <label for="producer" class="col-3 col-form-label">Producer:</label> 
                 <div class="col-9">
                   <input id="producer" name="producer" placeholder="Movie Producer" type="text" class="form-control" required="true">
                 </div>
               </div>
               <br>
-              <div class="form-group row">
+              <div class="form-group row p-0 m-0">
                 <label for="director" class="col-3 col-form-label">Director:</label> 
                 <div class="col-9">
                   <input id="director" name="director" placeholder="Movie Director" type="text" class="form-control" required="true">
                 </div>
               </div>
               <br>
-              <div class="form-group row">
+              <div class="form-group row p-0 m-0">
                 <label for="actor" class="col-3 col-form-label">Actors:</label> 
                 <div class="col-9">
                   <input id="actor" name="actor" placeholder="Actors Name" type="text" class="form-control" required="true">
                 </div>
               </div>
               <br>
-              <div class="form-group row">
+              <div class="form-group row p-0 m-0">
                 <label for="story" class="col-3 col-form-label">Story:</label> 
                 <div class="col-9">
                   <textarea id="story" name="story" cols="40" rows="4" class="form-control" required="true"></textarea>
                 </div>
               </div>
               <br>
-              <div class="form-group row">
+              <div class="form-group row p-0 m-0">
                 <label for="language" class="col-3 col-form-label">Language:</label> 
                 <div class="col-9">
                   <select id="language" class="form-select" aria-label="Default select example" required="true" name="language">
@@ -58,9 +63,9 @@
                 </div>
               </div>
               <br>
-              <div class="form-group row">
+              <div class="form-group row p-0 m-0">
                 <label class="col-3 col-form-label" for="category">Category:</label> 
-                <div class="col-9">
+                <div class="col-8 border mx-3 py-2 rounded">
                   <div class="form-check form-check-inline">
                     <input class="form-check-input" type="checkbox" name="category" value="Action" id="action">
                     <label class="form-check-label" for="action">Action</label>
@@ -81,10 +86,42 @@
                     <input class="form-check-input" type="checkbox" name="category" value="Adventure" id="adventure">
                     <label class="form-check-label" for="adventure">Adventure</label>
                   </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" name="category" value="Sci-fi" id="Sci-fi">
+                    <label class="form-check-label" for="Sci-fi">Sci-fi</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" name="category" value="Romance" id="Romance">
+                    <label class="form-check-label" for="Romance">Romance</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" name="category" value="Thriller" id="Thriller">
+                    <label class="form-check-label" for="Thriller">Thriller</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" name="category" value="Mystery" id="Mystery">
+                    <label class="form-check-label" for="Mystery">Mystery</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" name="category" value="Crime" id="Crime">
+                    <label class="form-check-label" for="Crime">Crime</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" name="category" value="Animation" id="Animation">
+                    <label class="form-check-label" for="Animation">Animation</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" name="category" value="Fantasy" id="Fantasy">
+                    <label class="form-check-label" for="Fantasy">Fantasy</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" name="category" value="Superhero" id="Superhero">
+                    <label class="form-check-label" for="Superhero">Superhero</label>
+                  </div>
                 </div>
               </div>
               <br>
-              <div class="form-group row">
+              <div class="form-group row p-0 m-0">
                 <label for="language" class="col-3 col-form-label">Client:</label> 
                 <div class="col-9">
                   <select id="client" class="form-select" aria-label="Default select example" required="true" name="client">
@@ -98,7 +135,7 @@
               <br>
               
 
-              <div class="form-group row">
+              <div class="form-group row p-0 m-0">
                 <label class="col-3 col-form-label" for="file">Select Movie:</label>
                 <div class="col-9">
                     <input type="file" class="form-control" name="movie" id="upload_movie" required="true" accept="video/*, .mkv" />
@@ -110,7 +147,7 @@
               </div>
 
               <br>
-              <div class="form-group row">
+              <div class="form-group row p-0 m-0">
                 <label class="col-3 col-form-label" for="img">Select Thumbnail:</label>
                 <div class="col-9">
                     <input type="file" class="form-control" name="img" id="img" required="true" accept="image/*"/>
@@ -121,7 +158,7 @@
                 </div>
               </div>
               <br>
-              <div class="form-group row">
+              <div class="form-group row p-0 m-0">
                 <label class="col-3 col-form-label" for="img">Select Trailer:</label>
                 <div class="col-9">
                     <input type="file" class="form-control" name="trailer" id="trailer" required="true" accept="video/*, .mkv"/>
@@ -132,7 +169,7 @@
                 </div>
               </div>
               <br>
-              <div class="form-group row">
+              <div class="form-group row p-0 m-0">
                 <label for="director" class="col-3 col-form-label">Price per view:</label> 
                 <div class="col-9">
                   <input id="price" name="price" placeholder="Price" type="text" class="form-control" required="true">

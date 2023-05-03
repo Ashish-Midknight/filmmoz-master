@@ -7,7 +7,7 @@ var SocketIOFileUpload = require('socketio-file-upload');
 const io = require('socket.io')(http);
 var mysql = require('mysql');
 var fs = require('fs');
-var md5 = require('md5');
+var sha256 = require('js-sha256');
 var session = require('express-session');
 const bodyParser = require('body-parser');
 var cron = require('node-cron');
@@ -19,7 +19,6 @@ app.use(express.static('public'));
 app.set('trust proxy', 1);
 app.use(session({secret: process.env.SECRET, resave: false,saveUninitialized: true}));
 const server = app.listen(8000, () => console.log(`Listening on 8000`));
-const wss = new SocketServer({ server });
 app.use(bodyParser.urlencoded({extended:true}));
 
 
@@ -83,6 +82,21 @@ connection.query(sql, (err, result) =>{
 })
   
 });
+
+var daily = cron.schedule('0 0  */ * *', () => {
+  var date = new Date();
+  date = date.toString().slice(0, 15);
+  connection.query(`SELECT user_id, sub_end_date FROM user`, (err, result) => {
+    for (let i = 0; i < result.length; i++) {
+    if (result[i].sub_end_date == date) {
+      var sql = `UPDATE user SET sub_plan = "", sub_status = "inactive", sub_purch_date = "", sub_end_date = "" WHERE user_id = ${result[i].user_id}`;
+    connection.query(sql);
+    }
+  }
+  })
+  
+});
+daily.start()
 task.start()
 
 
@@ -118,7 +132,6 @@ io.sockets.on("connection", function(socket, err){
       var uploader = new SocketIOFileUpload();
       uploader.listen(socket);
       uploader.on("start", function(event){
-        console.log(event);
         if (event.file.id == 0) {
           uploader.dir = __dirname + "/public/uploads/movies";
         } else if (event.file.id == 1) {
@@ -199,7 +212,9 @@ app.post('/upload', (req, res,) => {
     } else {
       var sql = `INSERT INTO movies(title,director_name,producer_name,actor_name,client_name,client_id,story,language,file_name,category,price_per_view,thumb_file_name,trailer) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);`;
       connection.query(sql, [title,director,producer,actor,client[0],client[1],story,language,video,category,price,img,trailer] ,(err) => {
-        if (err) {console.log(err)}
+        if (err) {
+          res.redirect('/');
+        }
       })
     }
     
@@ -223,6 +238,9 @@ app.get("/newclient", (req, res) => {
 })
 
 app.post("/newclient", upload.fields([{ name: 'Aadhar', maxCount: 1 }, { name: 'Pan', maxCount: 1 }]), (req, res) => {
+  if (!req.session.user) {
+    res.redirect("/")
+  } else {
   var name = req.body.name;
   var contact = req.body.contact;
   var email = req.body.email;
@@ -233,6 +251,7 @@ app.post("/newclient", upload.fields([{ name: 'Aadhar', maxCount: 1 }, { name: '
     if (err) throw err;
   })
   res.redirect("clients");
+}
 })
 
 app.get('/clients', (req, res) => {
@@ -242,17 +261,17 @@ app.get('/clients', (req, res) => {
     var sql = `SELECT * FROM clients`;
     connection.query(sql, (err, clients) => {
       if (err) {
-        console.log(err);
+        res.redirect("/");
       } else{
         var sql = `SELECT * FROM movies`;
         connection.query(sql, (err, movies) => {
           if (err) {
-            console.log(err);
+            res.redirect("/");
           } else{
             var sql = `SELECT * FROM history`;
             connection.query(sql, (err, history) => {
               if (err) {
-                console.log(err);
+                res.redirect("/");
               } else{
               res.render("clients", {result:clients, movies:movies, history:history});
               }
@@ -288,6 +307,9 @@ app.post("/clientMovies", (req, res) => {
 })
 
 app.post("/deleteClient", (req, res) => {
+  if (!req.session.user) {
+    res.redirect("/")
+  } else {
   var clientid = req.body.id;
   var sql = `SELECT * FROM clients WHERE Id = ${clientid}`;
   connection.query(sql, (err, result) => {
@@ -295,16 +317,19 @@ app.post("/deleteClient", (req, res) => {
     connection.query(sql, (err) => {  
       connection.query(`DELETE FROM clients WHERE Id = ${clientid}`, (err) => {
         if(err){
-          console.log(err);
+          res.redirect('/clients');
         }
         res.redirect('/clients');
       })
     });  
   });
-
+  }
 });
 
 app.post("/restore", (req, res) => {
+  if (!req.session.user) {
+    res.redirect("/")
+  } else {
   var id = req.body.id;
   var name = req.body.name;
   var contact = req.body.contact;
@@ -316,9 +341,13 @@ app.post("/restore", (req, res) => {
     connection.query(`DELETE FROM recycle WHERE Id = ${id}`)
   })
   res.redirect("/clients")
+}
 });
 
 app.post("/editClient", (req, res) => {
+  if (!req.session.user) {
+    res.redirect("/")
+  } else {
   var id = req.body.id;
   var name = req.body.name;
   var contact = req.body.contact;
@@ -342,6 +371,7 @@ app.post("/editClient", (req, res) => {
     }
   })
   res.redirect('/clients');
+}
 })
 
 app.post("/updateAadhar",upload.single("Aadhar"), (req,res) => {
@@ -483,6 +513,9 @@ app.post("/delete", (req,res) => {
     console.log("File does not exist");
   }
   connection.query(sql, (err) =>{
+    if (err) {
+      res.redirect("/view");
+    }
     console.log("Entry deleted");
   }) 
 
@@ -525,7 +558,7 @@ app.get("/logout", (req, res) => {
 
 app.post("/login", (req, res) => {
   var id = req.body.loginid;
-  var pass = md5(req.body.password);
+  var pass = sha256(req.body.password);
   var sql = `SELECT * FROM admin`;
   connection.query(sql, (err, dbop) => {
     if (err) {res.redirect("/");}
@@ -553,10 +586,11 @@ app.get("/user", (req, res) => {
   if (!req.session.user) {
     res.redirect("/")
   } else {
-    var userCount = undefined;
         var sql = `SELECT * FROM user`;
         connection.query(sql, (err, rows) => {
-          res.render("users", {userCount: userCount, rows:rows}); 
+          connection.query(`SELECT p_name, dur_month FROM sub_package`, (err, result) => {
+            res.render("users", {rows:rows, result:result}); 
+          })
         });
   }
 })
@@ -574,7 +608,7 @@ app.post('/blockUser', (req, res) => {
     var sql = `UPDATE user SET block_status= 1 WHERE user_id = ${id}`
   }
   connection.query(sql, (err) => {
-    if(err){console.log(err)};
+    if(err){console.log(res.redirect('/user'))};
     res.redirect('/user');
   })
   
@@ -589,9 +623,37 @@ app.post('/deleteUser', (req, res) => {
   var id = req.body.user;
     var sql = `DELETE FROM user WHERE user_id = ${id}`
   connection.query(sql, (err) => {
-    if(err){console.log(err)};
+    if(err){console.log(res.redirect('/user'))};
   })
   res.redirect('/user');
+}
+})
+
+app.post('/activateUser', (req, res) => {
+  if (!req.session.user) {
+    res.redirect("/")
+  } else {
+  var user = req.body.id;
+  var duration = req.body.dur;
+  var currDate = new Date()
+  var nextDate = new Date()
+  nextDate.setDate(nextDate.getDate() + parseInt(duration))
+  var sql = `UPDATE user SET sub_plan = "${duration + " days"}", sub_status = "active", sub_purch_date = "${currDate.toString().slice(0,15)}", sub_end_date = "${nextDate.toString().slice(0,15)}" WHERE user_id = ${user}`;
+  connection.query(sql, (err) => {
+    res.redirect("/user");
+  })
+}
+})
+
+app.post('/deactivate', (req, res) => {
+  if (!req.session.user) {
+    res.redirect("/")
+  } else {
+    var user = req.body.id
+    var sql = `UPDATE user SET sub_plan = "", sub_status = "inactive", sub_purch_date = "", sub_end_date = "" WHERE user_id = ${user}`;
+    connection.query(sql, (err) => {
+      res.redirect("/user");
+    })
 }
 })
 
@@ -604,7 +666,7 @@ app.post('/notify', (req,res) => {
   var id = req.body.user;
   var sql = `UPDATE user SET notification = "${message}" WHERE user_id = ${id}`
   connection.query(sql, (err) => {
-    if(err){console.log(err)};
+    if(err){console.log(res.redirect('/user'))};
   })
   res.redirect('/user');
 }
@@ -617,12 +679,49 @@ app.get("/package", (req, res) => {
   if (!req.session.user) {
     res.redirect("/")
   } else {
-  res.render("package")
+    connection.query(`SELECT * FROM sub_package`, (err,result) => {
+      res.render("package", {result:result})
+    })
+  
   }
 })
 
+app.post("/addPack", (req,res) => {
+  if (!req.session.user) {
+    res.redirect("/")
+  } else {
+  var name = req.body.name;
+  var price = req.body.price;
+  var time = req.body.time;
+  connection.query(`INSERT INTO sub_package(id, p_name, price, dur_month) VALUES ('', '${name}', '${price}', '${time}')`)
+  res.redirect("/package");
+  }
+})
 
+app.post("/editPack", (req,res) => {
+  if (!req.session.user) {
+    res.redirect("/")
+  } else {
+  var name = req.body.name;
+  var price = req.body.price;
+  var time = req.body.time;
+  var id = req.body.id
+  connection.query(`UPDATE sub_package SET p_name = '${name}',price = '${price}',dur_month ='${time}' WHERE id = ${id}`)
 
-http.listen(3000 , '192.168.1.7',  () => {
+  res.redirect("/package");
+  }
+})
+app.post("/deletePack", (req,res) => {
+  if (!req.session.user) {
+    res.redirect("/")
+  } else {
+  var id = req.body.id
+  connection.query(`DELETE FROM sub_package WHERE id = ${id}`)
+
+  res.redirect("/package");
+  }
+})
+
+http.listen(3000 , '192.168.1.19',  () => {
   console.log(`listening on port 3000`);
 });

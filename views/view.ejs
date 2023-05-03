@@ -30,10 +30,13 @@
         background-color: #3d3d3d !important;
         color: #ffffff;
     }
+    .shadow-sm {
+      box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px !important;
+    }
   </style>
 <section class="ms-auto me-0" style="width: 80%;">
     <% for( let i = 0; i < rows.length; i++ ) { %>
-        <div class="card border-dark mb-3" style="border-radius: 0 0.375rem 0.375rem 0;">
+        <div class="card border-dark mb-3 shadow-sm" style="border-radius: 0 0.375rem 0.375rem 0;">
             <div class="row g-0">
               <div class="col-md-3 d-flex justify-content-center align-items-center">
                 <% var srow = rows[i].thumb_file_name;  %>

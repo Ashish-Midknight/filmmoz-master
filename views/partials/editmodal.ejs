@@ -3,6 +3,12 @@
   <i class="bi bi-pen-fill" style="font-size: large;"></i>
   </button>
 
+  <style>
+    .form-check {
+      width: 20%;
+    }
+  </style>
+
   <!-- Modal -->
   <form action="/edit" method="post">
   <div class="modal fade" id="exampleModaledit<%= [i] %>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -82,7 +88,7 @@
                     <% var category = rows[i].category %> 
                     
                     <% category = category.split(',') %>
-                    <% var arr = [0, 0, 0, 0, 0] %> 
+                    <% var arr = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] %> 
                     <% for (let j = 0; j < category.length; j++) { %>
                     <%  if (category[j] == 'Action' ) { %>
                     <% arr[0] = 1 }%> 
@@ -94,6 +100,22 @@
                     <% arr[3] = 1 }%>  
                     <%  if (category[j] == 'Adventure' ) { %>
                     <% arr[4] = 1 }%> 
+                    <%  if (category[j] == 'Sci-fi' ) { %>
+                    <% arr[5] = 1 }%>
+                    <%  if (category[j] == 'Romance' ) { %>
+                    <% arr[6] = 1 }%>
+                    <%  if (category[j] == 'Thriller' ) { %>
+                    <% arr[7] = 1 }%>
+                    <%  if (category[j] == 'Mystery' ) { %>
+                    <% arr[8] = 1 }%>
+                    <%  if (category[j] == 'Crime' ) { %>
+                    <% arr[9] = 1 }%>
+                    <%  if (category[j] == 'Animation' ) { %>
+                    <% arr[10] = 1 }%>
+                    <%  if (category[j] == 'Fantasy' ) { %>
+                    <% arr[11] = 1 }%>
+                    <%  if (category[j] == 'Superhero' ) { %>
+                    <% arr[12] = 1 }%>
                     <% } %>
 
                         <div class="form-check form-check-inline">
@@ -148,6 +170,85 @@
                       <label class="form-check-label" for="adventure">Adventure</label>
                     </div>
 
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="checkbox" name="category" value="Sci-fi" id="Sci-fi"
+                      <% if (arr[5] == 1) { %>
+                        checked>
+                        <% } else { %> 
+                          >
+                          <% } %> 
+                      <label class="form-check-label" for="Sci-fi">Sci-fi</label>
+                    </div>
+
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="checkbox" name="category" value="Romance" id="Romance"
+                      <% if (arr[6] == 1) { %>
+                        checked>
+                        <% } else { %> 
+                          >
+                          <% } %> 
+                      <label class="form-check-label" for="Romance">Romance</label>
+                    </div>
+
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="checkbox" name="category" value="Thriller" id="Thriller"
+                      <% if (arr[7] == 1) { %>
+                        checked>
+                        <% } else { %> 
+                          >
+                          <% } %> 
+                      <label class="form-check-label" for="Thriller">Thriller</label>
+                    </div>
+
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="checkbox" name="category" value="Mystery" id="Mystery"
+                      <% if (arr[8] == 1) { %>
+                        checked>
+                        <% } else { %> 
+                          >
+                          <% } %> 
+                      <label class="form-check-label" for="Mystery">Mystery</label>
+                    </div>
+
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="checkbox" name="category" value="Crime" id="Crime"
+                      <% if (arr[9] == 1) { %>
+                        checked>
+                        <% } else { %> 
+                          >
+                          <% } %> 
+                      <label class="form-check-label" for="Crime">Crime</label>
+                    </div>
+
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="checkbox" name="category" value="Animation" id="Animation"
+                      <% if (arr[10] == 1) { %>
+                        checked>
+                        <% } else { %> 
+                          >
+                          <% } %> 
+                      <label class="form-check-label" for="Animation">Animation</label>
+                    </div>
+
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="checkbox" name="category" value="Fantasy" id="Fantasy"
+                      <% if (arr[11] == 1) { %>
+                        checked>
+                        <% } else { %> 
+                          >
+                          <% } %> 
+                      <label class="form-check-label" for="Fantasy">Fantasy</label>
+                    </div>
+
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="checkbox" name="category" value="Superhero" id="Superhero"
+                      <% if (arr[12] == 1) { %>
+                        checked>
+                        <% } else { %> 
+                          >
+                          <% } %> 
+                      <label class="form-check-label" for="Superhero">Superhero</label>
+                    </div>
                   </div>
                 </div>
                 <br>
