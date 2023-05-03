@@ -8,7 +8,7 @@ const io = require('socket.io')(http);
 var mysql = require('mysql');
 var fs = require('fs');
 var sha256 = require('js-sha256');
-var session = require('express-session');
+var session = require('cookie-session');
 const bodyParser = require('body-parser');
 var cron = require('node-cron');
 var multer = require('multer');
@@ -722,6 +722,6 @@ app.post("/deletePack", (req,res) => {
   }
 })
 
-http.listen(3000 , '192.168.1.19',  () => {
+http.listen(process.env.PORT || 3000 , () => {
   console.log(`listening on port 3000`);
 });
