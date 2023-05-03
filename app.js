@@ -14,11 +14,11 @@ var cron = require('node-cron');
 var multer = require('multer');
 
 app.set('view engine', 'ejs');
-app.use(SocketIOFileUpload.router).listen(80);
+app.use(SocketIOFileUpload.router).listen(process.env.PORT || 80);
 app.use(express.static('public'));
 app.set('trust proxy', 1);
 app.use(session({secret: process.env.SECRET, resave: false,saveUninitialized: true}));
-const server = app.listen(8000, () => console.log(`Listening on 8000`));
+const server = app.listen(process.env.PORT || 8000, () => console.log(`Listening on 8000`));
 app.use(bodyParser.urlencoded({extended:true}));
 
 
