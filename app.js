@@ -14,7 +14,7 @@ var cron = require('node-cron');
 var multer = require('multer');
 
 app.set('view engine', 'ejs');
-app.use(SocketIOFileUpload.router).listen(process.env.PORT || 80);
+app.use(SocketIOFileUpload.router).listen(process.env.PORT || 8080);
 app.use(express.static('public'));
 app.set('trust proxy', 1);
 app.use(session({secret: process.env.SECRET, resave: false,saveUninitialized: true}));
