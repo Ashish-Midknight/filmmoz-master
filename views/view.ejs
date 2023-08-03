@@ -40,8 +40,8 @@
             <div class="row g-0">
               <div class="col-md-3 d-flex justify-content-center align-items-center">
                 <% var srow = rows[i].thumb_file_name;  %>
-                <% srow = srow.slice(34);  %>  
-                <img src="uploads/thumbnails/<%= srow %>" alt="<%= srow %> " style="height: 10vw; object-fit: cover; overflow: hidden; border: 5px solid #fff;">
+                <% srow = srow.slice(25);  %>  
+                <img src="http://localhost:3000/file?name=<%= srow %>" alt="<%= srow %> " style="height: 10vw; object-fit: cover; overflow: hidden; border: 5px solid #fff;">
               </div>
               <div class="col-md-8">
                 <div class="card-body">

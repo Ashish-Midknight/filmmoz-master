@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function(){
                 
     // Initialize instances:
-    var socket = io("192.168.1.19:3000");
+    var socket = io("localhost:3000");
     var movie = new SocketIOFileUpload(socket);
     var image = new SocketIOFileUpload(socket);
     var trailer = new SocketIOFileUpload(socket);

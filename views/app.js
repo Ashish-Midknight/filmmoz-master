@@ -14,11 +14,12 @@ var multer = require('multer');
 var cors = require('cors')
 
 app.set('view engine', 'ejs');
-app.use(SocketIOFileUpload.router).listen();
+app.use(SocketIOFileUpload.router).listen(process.env.PORT || 8080);
 app.use(express.static('public'));
 app.set('trust proxy', 1);
 app.use(session({secret: process.env.SECRET, resave: false,saveUninitialized: true}));
 app.use(bodyParser.urlencoded({extended:true}));
+// Enable CORS with specific origins
 app.use(cors({
   'allowedHeaders': ['sessionId', 'Content-Type'],
   'exposedHeaders': ['sessionId'],
@@ -29,10 +30,11 @@ app.use(cors({
 
 
 
+
 //------------------Multer Section-------------------//
 const storage = multer.diskStorage({ 
   destination: function (req, file, cb) {
-    cb(null, __dirname + '/public/uploads')
+    cb(null, __dirname + 'public/uploads')
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname)
@@ -141,7 +143,7 @@ io.sockets.on("connection", function(socket, err){
       uploader.on("start", function(event){
           if (fs.existsSync(__dirname + "/public/uploads/" + event.file.name)) {
             fs.unlink(__dirname + "/public/uploads/" + event.file.name, function(err){
-              if (err) {  
+              if (err) {
                 console.log(err);
               }
             });
@@ -163,14 +165,6 @@ io.sockets.on("connection", function(socket, err){
           
       uploader.on("error", function(event){
         fs.unlink(__dirname + "/public/uploads/" + event.file[0].name, function(err){
-          if (err) {console.log(err);}
-        });
-
-        fs.unlink(__dirname + "/public/uploads/" + event.file[1].name, function(err){
-          if (err) {console.log(err);}
-        });
-
-        fs.unlink(__dirname + "/public/uploads/" + event.file[2].name, function(err){
           if (err) {console.log(err);}
         });
         console.log("Error from uploader", event);
@@ -197,24 +191,33 @@ app.post('/upload', (req, res,) => {
   var img = "localhost:3000/file?name=" + imageName;
   var trailer = "localhost:3000/file?name=" + trailerName;
   var sql = `SELECT * FROM movies WHERE trailer = "${trailer}"`;
-  connection.query(sql , (err, result) => {
-    if (result.length > 0) {
+  connection.query(sql , (err, out) => {
+    if (out.length > 0) {
       var sql = "SELECT * FROM clients";
-      connection.query(sql, (err, result) => {
+    connection.query(sql, (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
         res.render('upload', {trigger:1, result:result});
-      })
+      }
+    })
     } else {
-      var sql = `INSERT INTO movies(title,director_name,producer_name,actor_name,client_name,client_id,story,language,file_name,category,price_per_view,thumb_file_name,trailer) VALUES("${title}","${director}","${producer}","${actor}","${client[0]}","${client[1]}","${story}","${language}","${video}","${category}","${price}","${img}","${trailer}");`;
+      var sql = `INSERT INTO movies(title,director_name,producer_name,actor_name,client_name,client_id,story,language,file_name,category,price_per_view,thumb_file_name,trailer) VALUES (${title},${director},${producer},${actor},${client[0]},${client[1]},${story},${language},${video},${category},${price},${img},${trailer});`;
       connection.query(sql, (err) => {
         if (err) {
-          console.log(err)
+          res.redirect('/');
         } else {
           res.redirect('/view');
         }
       })
     }
+    
     })
+    
+  
     }
+    
+    
   });
 
 
@@ -235,8 +238,8 @@ app.post("/newclient", upload.fields([{ name: 'Aadhar', maxCount: 1 }, { name: '
   var name = req.body.name;
   var contact = req.body.contact;
   var email = req.body.email;
-  var aadhar =  req.files.Aadhar[0].originalname;
-  var pan =  req.files.Pan[0].originalname;
+  var aadhar = req.files.Aadhar[0].destination +"/"+ req.files.Aadhar[0].originalname;
+  var pan = req.files.Pan[0].destination +"/"+ req.files.Pan[0].originalname;
   var sql = `INSERT INTO clients(Id, name, client_contact, client_email, aadhar, pan) VALUES ('', '${name}','${contact}','${email}', '${aadhar}', '${pan}')`;
   connection.query(sql, (err) => {
     if (err) throw err;
@@ -399,10 +402,10 @@ app.post("/updatePan",upload.single("Pan"), (req,res) => {
 
 
 app.post("/aadhar", (req, res) => {
-  res.sendFile(__dirname + "/public/uploads/" + req.body.aadhar)
+  res.sendFile(__dirname + "/" + req.body.aadhar)
 })
 app.post("/pan", (req, res) => {
-  res.sendFile(__dirname + "/public/uploads/" + req.body.pan)
+  res.sendFile(__dirname + "/" + req.body.pan)
 })
 
 app.get("/recycle", (req,res) => {
@@ -486,20 +489,20 @@ app.post("/delete", (req,res) => {
   var trailer = req.body.trailer;
   var sql = `DELETE FROM movies WHERE movie_id="${id}"`;
 
-  if (fs.existsSync("public/uploads/" + file)) {
-    fs.unlinkSync("public/uploads/" + file)
+  if (fs.existsSync("public/" + file)) {
+    fs.unlinkSync("public/" + file)
   }else{
     console.log("File does not exist");
   }
 
-  if (fs.existsSync("public/uploads/" + img)) {
-    fs.unlinkSync("public/uploads/" + img)
+  if (fs.existsSync("public/" + img)) {
+    fs.unlinkSync("public/" + img)
   }else{
     console.log("File does not exist");
   }
 
-  if (fs.existsSync("public/uploads/" + trailer)) {
-    fs.unlinkSync("public/uploads/" + trailer)
+  if (fs.existsSync("public/" + trailer)) {
+    fs.unlinkSync("public/" + trailer)
   }else{
     console.log("File does not exist");
   }
@@ -543,7 +546,7 @@ app.get("/", (req,res) => {
 
 
 app.get("/logout", (req, res) => {
-  req.session.destroy();
+  req.session.user = 0;
   res.redirect("/");
 })
 
@@ -708,16 +711,19 @@ app.post("/deletePack", (req,res) => {
   } else {
   var id = req.body.id
   connection.query(`DELETE FROM sub_package WHERE id = ${id}`)
+
   res.redirect("/package");
   }
 })
 
 //-----------------movie render-------------//
 app.get('/file', (req, res) => {
-    var name = req.query.name ? String(req.query.name) : "Invalid";
-    res.sendFile(name, { root: __dirname + "/public/uploads/" });
+    var name = req.query.name ? String(req.query.name) : "0";
+    console.log(name);
+    res.sendFile(name, { root: __dirname + "/public/uploads/"});
+  
 });
 
-http.listen(process.env.PORT || 3000,() => {
+http.listen(process.env.PORT || 3000 , () => {
   console.log(`listening on port 3000`);
 });

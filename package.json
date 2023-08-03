@@ -11,6 +11,7 @@
   "dependencies": {
     "body-parser": "^1.20.1",
     "cookie-session": "^2.0.0",
+    "cors": "^2.8.5",
     "cron": "^2.2.0",
     "dotenv": "^16.0.3",
     "ejs": "^3.1.8",
@@ -23,13 +24,5 @@
     "nodemon": "^2.0.20",
     "socket.io": "^4.5.4",
     "socketio-file-upload": "^0.7.3"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Ashish-Midknight/filmmoz.git"
-  },
-  "bugs": {
-    "url": "https://github.com/Ashish-Midknight/filmmoz/issues"
-  },
-  "homepage": "https://github.com/Ashish-Midknight/filmmoz#readme"
+  }
 }
